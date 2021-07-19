@@ -11,16 +11,9 @@ Future<void> sbLogger({
   Object? exception,
 }) async {
   final String st = StackTrace.current.toString();
-  final String package = '(package:' + st.split('(package:')[2].split(')')[0] + ')';
-  log(
-    message == null
-        ? '>'
-        : '>$message' +
-            (indent == null
-                ? ''
-                : ('\n' + const JsonEncoder.withIndent('  ').convert(indent))) +
-            '\n' +
-            package,
-    error: exception,
-  );
+  final String package = '\n(package:' + st.split('(package:')[2].split(')')[0] + ')';
+
+  final String messageValue = message ?? '';
+  final String indentValue = indent == null ? '' : '\n' + const JsonEncoder.withIndent('  ').convert(indent);
+  log(messageValue + indentValue + package, error: exception);
 }

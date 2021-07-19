@@ -1,43 +1,31 @@
-
-
 import 'package:flutter/material.dart';
 
 import 'SbPopResult.dart';
 import 'SbRoute.dart';
 
-class SbPopupRouteWidget extends StatefulWidget {
-  const SbPopupRouteWidget(this.sbPopupRoute);
+class SbRouteWidget extends StatefulWidget {
+  const SbRouteWidget(this.sbPopupRoute);
 
   final SbRoute sbPopupRoute;
 
   @override
-  _SbPopupRouteWidgetState createState() => _SbPopupRouteWidgetState();
+  _SbRouteWidgetState createState() => _SbRouteWidgetState();
 }
 
-class _SbPopupRouteWidgetState extends State<SbPopupRouteWidget> {
+class _SbRouteWidgetState extends State<SbRouteWidget> {
   @override
   void initState() {
     super.initState();
-    widget.sbPopupRoute.init();
-    widget.sbPopupRoute.context = context;
-    widget.sbPopupRoute.toastRouteSetState ??= setState;
-
-    final RenderBox fatherRenderBox =
-    widget.sbPopupRoute.fatherContext.findRenderObject()! as RenderBox;
-    final Size size = fatherRenderBox.size;
-    final Offset offset = fatherRenderBox.localToGlobal(Offset.zero);
-    widget.sbPopupRoute.fatherWidgetRect =
-        Rect.fromLTWH(offset.dx, offset.dy, size.width, size.height);
-    WidgetsBinding.instance!.addPostFrameCallback(
-          (Duration timeStamp) {
-        widget.sbPopupRoute.initDone();
-      },
-    );
+    widget.sbPopupRoute.onInit();
+    widget.sbPopupRoute.sbRouteSetState ??= setState;
+    WidgetsBinding.instance!.addPostFrameCallback((Duration timeStamp) {
+      widget.sbPopupRoute.onRead();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    widget.sbPopupRoute.buildCallBack();
+    widget.sbPopupRoute.onBuild();
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(

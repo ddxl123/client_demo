@@ -9,9 +9,7 @@ import 'SbRouteWidget.dart';
 abstract class SbRoute extends OverlayRoute<SbPopResult> {
   ///
 
-  SbRoute(this.fatherContext);
-
-  final BuildContext fatherContext;
+  SbRoute({this.triggerRect});
 
   // ==============================================================================
   //
@@ -29,41 +27,34 @@ abstract class SbRoute extends OverlayRoute<SbPopResult> {
   /// 已经被设定多次触发时只会执行第一次。
   Future<bool> whenPop(SbPopResult? popResult);
 
-  ///初始化
-  void init() {}
+  ///初始化。
+  void onInit() {}
 
-  /// 初始化结束
-  void initDone() {}
+  /// 初始化完成。
+  void onRead() {}
 
-  /// build
-  ///
   /// 会先执行 [build] 函数，后返回 widget。
-  void buildCallBack() {}
+  void onBuild() {}
 
-  /// body
-  ///
   /// Widget 为 [Positioned] 或 [AutoPositioned]
   List<Widget> body();
 
   /// 背景不透明度
-  double get backgroundOpacity;
+  double get backgroundOpacity => 0;
 
   /// 背景颜色
-  Color get backgroundColor;
+  Color get backgroundColor => Colors.transparent;
+
+  /// 使该 route 弹出的 widget 的 rect。
+  Rect? triggerRect;
 
   // ==============================================================================
   //
   // 非实现部分
   //
 
-  /// 当前 route 的根 Widget 的 context
-  late BuildContext context;
-
   /// 当前 route 的根 Widget 的 setState
-  void Function(void Function())? toastRouteSetState;
-
-  /// 父 widget 的 Rect
-  late Rect fatherWidgetRect;
+  void Function(void Function())? sbRouteSetState;
 
   /// 是否显示 popWaiting
   bool isPopWaiting = false;
@@ -82,7 +73,7 @@ abstract class SbRoute extends OverlayRoute<SbPopResult> {
     }
     isPopping = true;
     isPopWaiting = true;
-    toastRouteSetState?.call(() {});
+    sbRouteSetState?.call(() {});
 
     final bool popResult = await whenPop(result);
     if (popResult) {
@@ -91,7 +82,7 @@ abstract class SbRoute extends OverlayRoute<SbPopResult> {
     } else {
       isPopping = false;
       isPopWaiting = false;
-      toastRouteSetState?.call(() {});
+      sbRouteSetState?.call(() {});
     }
   }
 
@@ -111,9 +102,8 @@ abstract class SbRoute extends OverlayRoute<SbPopResult> {
   Iterable<OverlayEntry> createOverlayEntries() {
     return <OverlayEntry>[
       OverlayEntry(
-        maintainState: true,
         builder: (_) {
-          return SbPopupRouteWidget(this);
+          return SbRouteWidget(this);
         },
       ),
     ];

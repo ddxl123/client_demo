@@ -1,5 +1,4 @@
 import 'package:demo/global/Global.dart';
-import 'package:demo/mvc/controller/appinit/FloatingBallController.dart';
 import 'package:demo/mvc/controller/homepage/HomePageController.dart';
 import 'package:demo/util/sbfreebox/SbFreeBox.dart';
 import 'package:demo/util/sbfreebox/SbFreeBoxWidget.dart';
@@ -8,8 +7,6 @@ import 'package:get/get.dart';
 
 class HomePage extends StatelessWidget {
   final HomePageController _homePageController = Get.put(HomePageController());
-  final FloatingBallController _sqliteDataFloatingBall =
-      Get.put(FloatingBallController());
 
   @override
   Widget build(BuildContext context) {
@@ -17,20 +14,20 @@ class HomePage extends StatelessWidget {
       sbFreeBoxController: _homePageController.sbFreeBoxController,
       boxWidth: screenSize.width,
       boxHeight: screenSize.height,
-      fixedLayerWidgets: _fixedLayerWidgets(),
+      fixedLayerWidgets: _fixedLayerWidgets(context),
       freeMoveScaleLayerWidgets: _freeMoveScaleLayerWidgets(),
     );
   }
 
-  Stack _fixedLayerWidgets() {
+  Stack _fixedLayerWidgets(BuildContext context) {
     return Stack(
       children: <Positioned>[
-        _bottomWidgets(),
+        _bottomWidgets(context),
       ],
     );
   }
 
-  Positioned _bottomWidgets() {
+  Positioned _bottomWidgets(BuildContext context) {
     return Positioned(
       bottom: 0,
       child: Container(
@@ -42,10 +39,13 @@ class HomePage extends StatelessWidget {
             Expanded(
                 child: TextButton(onPressed: () {}, child: const Text('发现'))),
             Expanded(
-              child: StatefulBuilder(
-                builder: (BuildContext btCtx, SetState setState) {
+              child: SbRectWidget(
+                builder: (Rect Function() getRect) {
                   return TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // _homePageController.toSelectPool(getRect());
+                      toLoginPage();
+                    },
                     child: const Text('aaa'),
                   );
                 },

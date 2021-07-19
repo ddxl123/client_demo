@@ -62,8 +62,6 @@ class SbButton extends StatefulWidget {
     this.isIndependentOnDown = false,
     this.isIndependentOnUp = false,
     this.isIndependentOnLongPressed = false,
-    this.backgroundColor = Colors.pink,
-    this.downBackgroundColor = Colors.grey,
   });
 
   final Widget child;
@@ -74,8 +72,6 @@ class SbButton extends StatefulWidget {
   final bool isIndependentOnDown;
   final bool isIndependentOnUp;
   final bool isIndependentOnLongPressed;
-  final Color backgroundColor;
-  final Color downBackgroundColor;
 
   @override
   State<StatefulWidget> createState() {
@@ -84,7 +80,6 @@ class SbButton extends StatefulWidget {
 }
 
 class _SbButton extends State<SbButton> {
-  Color? _currentColor;
   Offset _onDownPosition = Offset.zero;
   OnStatus _onStatus = OnStatus.none;
   Timer? _timer;
@@ -95,10 +90,7 @@ class _SbButton extends State<SbButton> {
   @override
   Widget build(BuildContext context) {
     return Listener(
-      child: Container(
-        color: _currentColor ?? widget.backgroundColor,
-        child: widget.child,
-      ),
+      child: widget.child,
       onPointerDown: (PointerDownEvent details) {
         _onDownPosition = details.position;
         _timer = Timer(Duration(milliseconds: _longPressedTime), () {
@@ -135,10 +127,7 @@ class _SbButton extends State<SbButton> {
 
         // 处在 [moving 区] 外时，
         final Offset delta = event.position - _onDownPosition;
-        if (delta.dx > _moveRange ||
-            delta.dy > _moveRange ||
-            delta.dx < -_moveRange ||
-            delta.dy < -_moveRange) {
+        if (delta.dx > _moveRange || delta.dy > _moveRange || delta.dx < -_moveRange || delta.dy < -_moveRange) {
           _onStatus = OnStatus.none;
           _timer?.cancel();
           setNoneStatus();
@@ -154,21 +143,13 @@ class _SbButton extends State<SbButton> {
     );
   }
 
-  void setNoneStatus() {
-    _currentColor = widget.backgroundColor;
-    setState(() {});
-  }
+  void setNoneStatus() {}
 
-  void setMovingStatus() {
-    _currentColor = widget.backgroundColor;
-    setState(() {});
-  }
+  void setMovingStatus() {}
 
   void setDownStatus(PointerDownEvent details) {
     final Function event = () {
-      _currentColor = widget.downBackgroundColor;
       widget.onDown?.call(details);
-      setState(() {});
     };
     if (widget.isIndependentOnDown) {
       event();
@@ -179,9 +160,7 @@ class _SbButton extends State<SbButton> {
 
   void setUpStatus(PointerUpEvent details) {
     final Function event = () {
-      _currentColor = widget.backgroundColor;
       widget.onUp?.call(details);
-      setState(() {});
     };
     if (widget.isIndependentOnUp) {
       event();
@@ -192,9 +171,7 @@ class _SbButton extends State<SbButton> {
 
   void setLongPressedStatus(PointerDownEvent details) {
     final Function event = () {
-      _currentColor = widget.backgroundColor;
       widget.onLongPressed?.call(details);
-      setState(() {});
     };
     if (widget.isIndependentOnLongPressed) {
       event();

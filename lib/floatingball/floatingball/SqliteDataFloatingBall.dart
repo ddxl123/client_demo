@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:demo/floatingball/FloatingBallBase.dart';
+import 'package:demo/floatingball/route/SqliteDataRoute.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,8 +17,6 @@ class SqliteDataFloatingBall extends FloatingBallBase {
 
   @override
   void onUp(PointerUpEvent pointerUpEvent) {
-    Get.to<dynamic>(Center(
-      child: Text('data'),
-    ));
+    navigator!.push<Object>(SqliteDataRoute());
   }
 }

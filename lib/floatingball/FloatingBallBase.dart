@@ -14,9 +14,7 @@ abstract class FloatingBallBase {
           child: Material(
             type: MaterialType.transparency,
             child: SbButton(
-              backgroundColor: Colors.transparent,
-              downBackgroundColor: Colors.transparent,
-              onUp: onUp,
+              onUp: (PointerUpEvent pointerUpEvent) => onUp(pointerUpEvent),
               onMove: (PointerMoveEvent pointerMoveEvent) {
                 _position += pointerMoveEvent.delta;
                 overlayEntry.markNeedsBuild();
@@ -52,6 +50,8 @@ abstract class FloatingBallBase {
 
   /// 悬浮球的半径。
   double get radius;
+
+  bool get isHideAfterOnUp => true;
 
   /// 点击了悬浮球，
   void onUp(PointerUpEvent pointerUpEvent);
