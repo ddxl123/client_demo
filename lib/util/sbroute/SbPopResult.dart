@@ -1,6 +1,6 @@
-
 class SbPopResult {
   SbPopResult({required this.popResultSelect, required this.value});
+
   PopResultSelect popResultSelect;
   Object? value;
 

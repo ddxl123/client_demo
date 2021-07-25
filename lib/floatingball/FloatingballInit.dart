@@ -7,7 +7,9 @@ final List<OverlayEntry> overlayEntries = <OverlayEntry>[
   SqliteDataFloatingBall().overlayEntry,
 ];
 
-void floatingBallInit(BuildContext context) {
-  final NavigatorState _navigatorState = Navigator.of(context);
-  _navigatorState.overlay!.insertAll(overlayEntries);
+class FloatingBallInit {
+  void init(BuildContext context) {
+    final NavigatorState _navigatorState = Navigator.of(context);
+    _navigatorState.overlay!.insertAll(overlayEntries);
+  }
 }

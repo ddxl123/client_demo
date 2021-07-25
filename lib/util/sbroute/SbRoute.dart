@@ -27,6 +27,8 @@ abstract class SbRoute extends OverlayRoute<SbPopResult> {
   /// 已经被设定多次触发时只会执行第一次。
   Future<bool> whenPop(SbPopResult? popResult);
 
+  bool whenException(Object exception, StackTrace stackTrace);
+
   ///初始化。
   void onInit() {}
 
@@ -53,7 +55,7 @@ abstract class SbRoute extends OverlayRoute<SbPopResult> {
   // 非实现部分
   //
 
-  /// 当前 route 的根 Widget 的 setState
+  /// 当前 route 顶层 Widget 的 setState
   void Function(void Function())? sbRouteSetState;
 
   /// 是否显示 popWaiting
@@ -65,8 +67,35 @@ abstract class SbRoute extends OverlayRoute<SbPopResult> {
   /// 是否正在 pop 中
   bool isPopping = false;
 
-  /// 1. 点击背景调用
-  /// 2. 触发物理返回调用
+  @override
+  Iterable<OverlayEntry> createOverlayEntries() {
+    return <OverlayEntry>[
+      OverlayEntry(
+        builder: (_) {
+          return SbRouteWidget(this);
+        },
+      ),
+    ];
+  }
+
+  /// 触发 pop。
+  @override
+  bool didPop(SbPopResult? result) {
+    try {
+      if (isPop == true) {
+        super.didPop(result);
+        return true;
+      } else {
+        // 这里 [toPop] 是异步的，先 return false，后完成 toPop 再次触发 didPop。
+        toPop(result);
+        return false;
+      }
+    } catch (e, st) {
+      return whenException(e, st);
+    }
+  }
+
+  /// pop 的结果处理。
   Future<void> toPop(SbPopResult? result) async {
     if (isPopping) {
       return;
@@ -78,35 +107,12 @@ abstract class SbRoute extends OverlayRoute<SbPopResult> {
     final bool popResult = await whenPop(result);
     if (popResult) {
       isPop = true;
-      didPop(null);
+      didPop(result);
     } else {
       isPopping = false;
       isPopWaiting = false;
       sbRouteSetState?.call(() {});
     }
-  }
-
-  /// 物理返回 的 [result] 为 null
-  @override
-  bool didPop(SbPopResult? result) {
-    if (isPop == true) {
-      super.didPop(null);
-      return true;
-    } else {
-      toPop(result);
-      return false;
-    }
-  }
-
-  @override
-  Iterable<OverlayEntry> createOverlayEntries() {
-    return <OverlayEntry>[
-      OverlayEntry(
-        builder: (_) {
-          return SbRouteWidget(this);
-        },
-      ),
-    ];
   }
 
   ///

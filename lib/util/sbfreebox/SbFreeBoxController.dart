@@ -1,15 +1,29 @@
+import 'package:demo/util/sblogger/SbLogger.dart';
 import 'package:flutter/material.dart';
 
 import 'Global.dart';
 
+class FreeBoxCamera {
+  FreeBoxCamera({
+    required this.easyPosition,
+    required this.scale,
+  });
+
+  /// 缩放值。
+  double scale;
+
+  /// 简易位置。
+  Offset easyPosition;
+
+  /// 获取实际位置。
+  Offset getActualPosition() => easyPosition - sbFreeBoxBodyOffset;
+}
+
 class SbFreeBoxController {
   ///
 
-  /// 当前缩放值,默认必须 1。
-  double scale = 1;
-
-  /// 当前偏移值,默认必须 (0,0)。
-  Offset offset = const Offset(0, 0);
+  /// 当前相机
+  FreeBoxCamera freeBoxCamera = FreeBoxCamera(easyPosition: Offset.zero, scale: 1);
 
   /// 整个 box 的 setState。
   late final void Function(void Function()) sbFreeBoxSetState;
@@ -50,8 +64,7 @@ class SbFreeBoxController {
     }
 
     /// 停止所有滑动动画
-    inertialSlideAnimationController.stop();
-    targetSlideAnimationController.stop();
+    _stopAll();
 
     /// 重置上一次 [临时缩放] 和 [临时触摸位置]
     _lastTempScale = 1;
@@ -67,16 +80,15 @@ class SbFreeBoxController {
 
     /// 进行缩放
     final double deltaScale = details.scale - _lastTempScale;
-    scale *= 1 + deltaScale;
+    freeBoxCamera.scale *= 1 + deltaScale;
 
     /// 缩放后的位置偏移
-    final Offset pivotDeltaOffset =
-        (offset - details.localFocalPoint) * deltaScale;
-    offset += pivotDeltaOffset;
+    final Offset pivotDeltaOffset = (freeBoxCamera.getActualPosition() - details.localFocalPoint) * deltaScale;
+    freeBoxCamera.easyPosition += pivotDeltaOffset;
 
     /// 非缩放的位置偏移
     final Offset deltaOffset = details.localFocalPoint - _lastTempTouchPosition;
-    offset += deltaOffset;
+    freeBoxCamera.easyPosition += deltaOffset;
 
     /// 变换上一次 [临时缩放] 和 [临时触摸位置]
     _lastTempScale = details.scale;
@@ -96,16 +108,13 @@ class SbFreeBoxController {
   /// 惯性滑动
   void _inertialSlide(ScaleEndDetails details) {
     // 持续时间
-    inertialSlideAnimationController.duration =
-        const Duration(milliseconds: 500);
+    inertialSlideAnimationController.duration = const Duration(milliseconds: 500);
     // 结束的位置
-    final Offset endOffset = offset +
-        Offset(details.velocity.pixelsPerSecond.dx / 10,
-            details.velocity.pixelsPerSecond.dy / 10);
-    // 配置惯性滑动
-    _offsetAnimation = inertialSlideAnimationController
-        .drive(CurveTween(curve: Curves.easeOutCubic))
-        .drive(Tween<Offset>(begin: offset, end: endOffset));
+    final Offset endEasyOffset = freeBoxCamera.easyPosition + Offset(details.velocity.pixelsPerSecond.dx / 10, details.velocity.pixelsPerSecond.dy / 10);
+    // 配置惯性滑动 --- 当前到目标
+    _offsetAnimation = inertialSlideAnimationController.drive(CurveTween(curve: Curves.easeOutCubic)).drive(
+          Tween<Offset>(begin: freeBoxCamera.easyPosition, end: endEasyOffset),
+        );
 
     // 执行惯性滑动
     inertialSlideAnimationController.forward(from: 0.0);
@@ -114,11 +123,10 @@ class SbFreeBoxController {
 
   /// 惯性滑动监听
   void _inertialSlideListener() {
-    offset = _offsetAnimation.value;
+    freeBoxCamera.easyPosition = _offsetAnimation.value;
 
     /// 被 stop() 或 动画播放完成 时, removeListener()
-    if (inertialSlideAnimationController.isDismissed ||
-        inertialSlideAnimationController.isCompleted) {
+    if (inertialSlideAnimationController.isDismissed || inertialSlideAnimationController.isCompleted) {
       inertialSlideAnimationController.removeListener(_inertialSlideListener);
     }
 
@@ -139,38 +147,36 @@ class SbFreeBoxController {
   ///
   /// 减去 [sbFreeBoxBodyOffset] 目的之一是为了不让 多位数 的结果存储，而只存储非偏移的数据，例如，只存 Offset(123,456)，而不存 Offset(10123,10456)。
   ///
-  /// 注意，是基于 [screenPosition]\ [offset]\[scale] 属性定位。
-  Offset screenToBoxTransform(Offset screenPosition) {
-    return (screenPosition - offset) / scale - sbFreeBoxBodyOffset;
+  /// 注意，是基于 [screenPosition]\ [position]\[scale] 属性定位。
+  Offset screenToBoxActual(Offset screenPosition) {
+    // return (screenPosition - freeBoxCamera.position) / freeBoxCamera.scale - sbFreeBoxBodyOffset;
+    return (screenPosition - freeBoxCamera.getActualPosition()) / freeBoxCamera.scale;
   }
 
-  /// 滑动至目标位置
+  /// 滑动至目标位置。
   ///
   /// 初始化时要滑动到 负 [sbFreeBoxBodyOffset] 的位置，原因是左上位置是界限，元素会被切除渲染。
-  void targetSlide({
-    required Offset targetOffset,
-    required double targetScale,
-    required bool rightNow,
-  }) {
+  void targetSlide({required FreeBoxCamera targetCamera, required bool rightNow}) {
+    sbLogger(message: targetCamera.getActualPosition().toString());
+    // 停止全部动画（同时会移除其他监听）。
+    _stopAll();
     if (rightNow) {
-      offset = targetOffset - sbFreeBoxBodyOffset;
-      targetScale = 1.0;
-      targetSlideAnimationController.removeListener(_targetSlideListener);
+      freeBoxCamera.easyPosition = targetCamera.easyPosition;
+      freeBoxCamera.scale = targetCamera.scale;
       sbFreeBoxSetState(() {});
       return;
     }
+
+    // 持续时间。
     targetSlideAnimationController.duration = const Duration(seconds: 1);
-    _offsetAnimation = targetSlideAnimationController
-        .drive(CurveTween(curve: Curves.easeInOutBack))
-        .drive(Tween<Offset>(
-          begin: offset,
-          end: targetOffset - sbFreeBoxBodyOffset,
+    // 从当前到目标。
+    _offsetAnimation = targetSlideAnimationController.drive(CurveTween(curve: Curves.easeInOutBack)).drive(Tween<Offset>(
+          begin: freeBoxCamera.easyPosition,
+          end: targetCamera.easyPosition,
         ));
-    _scaleAnimation = targetSlideAnimationController
-        .drive(CurveTween(curve: Curves.easeInOutBack))
-        .drive(Tween<double>(
-          begin: scale,
-          end: targetScale,
+    _scaleAnimation = targetSlideAnimationController.drive(CurveTween(curve: Curves.easeInOutBack)).drive(Tween<double>(
+          begin: freeBoxCamera.scale,
+          end: targetCamera.scale,
         ));
     targetSlideAnimationController.forward(from: 0.4);
     targetSlideAnimationController.addListener(_targetSlideListener);
@@ -178,15 +184,22 @@ class SbFreeBoxController {
 
   /// 滑动至目标位置监听
   void _targetSlideListener() {
-    offset = _offsetAnimation.value;
-    scale = _scaleAnimation.value;
+    freeBoxCamera.easyPosition = _offsetAnimation.value;
+    freeBoxCamera.scale = _scaleAnimation.value;
 
     /// 被 stop() 或 动画播放完成 时, removeListener()
-    if (targetSlideAnimationController.isDismissed ||
-        targetSlideAnimationController.isCompleted) {
+    if (targetSlideAnimationController.isDismissed || targetSlideAnimationController.isCompleted) {
       targetSlideAnimationController.removeListener(_targetSlideListener);
     }
 
     sbFreeBoxSetState(() {});
+  }
+
+  /// 停止所有滑动动画。
+  ///
+  /// 被停止同时会被 removeListener，因为 addListener 的函数对象内都对 isDismissed（是否被 stop）进行了判断。
+  void _stopAll() {
+    inertialSlideAnimationController.stop();
+    targetSlideAnimationController.stop();
   }
 }

@@ -29,16 +29,16 @@ class _SbFreeBoxStackState extends State<SbFreeBoxStack> {
 ///
 /// 加上 [sbFreeBoxBodyOffset] 目的之一是为了复原存储前被减去的偏移。
 class SbFreeBoxPositioned extends StatelessWidget {
-  const SbFreeBoxPositioned({required this.boxPosition, required this.child});
+  const SbFreeBoxPositioned({required this.easyPosition, required this.child});
 
-  final Offset boxPosition;
+  final Offset easyPosition;
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: boxPosition.dy + sbFreeBoxBodyOffset.dy,
-      left: boxPosition.dx + sbFreeBoxBodyOffset.dy,
+      top: easyPosition.dy + sbFreeBoxBodyOffset.dy,
+      left: easyPosition.dx + sbFreeBoxBodyOffset.dy,
       child: child,
     );
   }
