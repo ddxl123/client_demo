@@ -1,5 +1,5 @@
 import '../Member.dart';
-import 'Util.dart';
+import '../Util.dart';
 
 class ModelContent {
   ModelContent({

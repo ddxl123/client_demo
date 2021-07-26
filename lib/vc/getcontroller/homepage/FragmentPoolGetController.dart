@@ -1,3 +1,9 @@
+import 'package:demo/data/model/ModelBase.dart';
+import 'package:demo/data/model/ModelManager.dart';
+import 'package:demo/data/model/PnComplete.dart';
+import 'package:demo/data/model/PnFragment.dart';
+import 'package:demo/data/model/PnMemory.dart';
+import 'package:demo/data/model/PnRule.dart';
 import 'package:demo/data/vo/FragmentPoolNodeVO.dart';
 import 'package:demo/util/sbfreebox/SbFreeBoxController.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,6 +16,7 @@ enum FragmentPoolType {
   fragment,
   memory,
   complete,
+  rule,
 }
 
 extension FragmentPoolTypeExt on FragmentPoolType {
@@ -23,6 +30,8 @@ extension FragmentPoolTypeExt on FragmentPoolType {
         return '记忆池';
       case 3:
         return '完成池';
+      case 4:
+        return '记忆池';
       default:
         return 'err';
     }
@@ -43,14 +52,7 @@ class FragmentPoolGetController extends GetxController {
   FragmentPoolType currentPoolType = FragmentPoolType.none;
 
   /// 当前碎片池的数据。
-  final List<FragmentPoolNodeVO> currentPoolData = <FragmentPoolNodeVO>[
-    FragmentPoolNodeVO()
-      ..title = '123'
-      ..easyPosition = '345',
-    FragmentPoolNodeVO()
-      ..title = '哈哈哈哈'
-      ..easyPosition = '-123,-345',
-  ];
+  final List<FragmentPoolNodeVO> currentPoolData = <FragmentPoolNodeVO>[];
 
   /// 全部池的【临时固定相机】。
   ///
@@ -60,7 +62,7 @@ class FragmentPoolGetController extends GetxController {
   final Map<FragmentPoolType, FreeBoxCamera> _poolTempFixedCameras = <FragmentPoolType, FreeBoxCamera>{};
 
   /// 获取当前池的【临时相机】。
-  FreeBoxCamera getCurrentPoolTampFixedCamera() {
+  FreeBoxCamera get getCurrentPoolTampFixedCamera {
     if (_poolTempFixedCameras.containsKey(currentPoolType) && _poolTempFixedCameras[currentPoolType] != null) {
       return _poolTempFixedCameras[currentPoolType]!;
     }
@@ -72,8 +74,6 @@ class FragmentPoolGetController extends GetxController {
   ///
   /// 若当前池就是 [toPoolType]，则会重新进入当前池。
   Future<void> to(FragmentPoolType toPoolType) async {
-    // 异步获取 [toPoolType] 的池数据。
-
     // 设置 [toPoolType] 前的临时相机。
     final HomePageGetController homePageGetController = Get.find<HomePageGetController>();
     if (_poolTempFixedCameras.containsKey(currentPoolType)) {
@@ -91,16 +91,37 @@ class FragmentPoolGetController extends GetxController {
       });
     }
 
-    // 设置 [currentPoolType]。
-    currentPoolType = toPoolType;
-
     // 设置 [currentPoolData]。
+    currentPoolData.clear();
+    Future<void> query(String tableName) async {
+      final List<ModelBase> pns = await ModelManager.queryRowsAsModels(connectTransaction: null, tableName: tableName);
+      currentPoolData.addAll(FragmentPoolNodeVO().froms(pns));
+    }
+
+    switch (toPoolType) {
+      case FragmentPoolType.fragment:
+        await query(PnFragment().tableName);
+        break;
+      case FragmentPoolType.memory:
+        await query(PnMemory().tableName);
+        break;
+      case FragmentPoolType.complete:
+        await query(PnComplete().tableName);
+        break;
+      case FragmentPoolType.rule:
+        await query(PnRule().tableName);
+        break;
+      default:
+        throw 'unknown poolType: $toPoolType';
+    }
+    // 全部成功后，设置 [currentPoolType]。
+    currentPoolType = toPoolType;
 
     // setState 池。
     update();
 
     // to [getCurrentPoolTampFixedCamera]
-    homePageGetController.sbFreeBoxController.targetSlide(targetCamera: getCurrentPoolTampFixedCamera(), rightNow: true);
+    homePageGetController.sbFreeBoxController.targetSlide(targetCamera: getCurrentPoolTampFixedCamera, rightNow: true);
   }
 
   ///

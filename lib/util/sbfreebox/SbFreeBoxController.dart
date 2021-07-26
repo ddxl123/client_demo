@@ -157,7 +157,6 @@ class SbFreeBoxController {
   ///
   /// 初始化时要滑动到 负 [sbFreeBoxBodyOffset] 的位置，原因是左上位置是界限，元素会被切除渲染。
   void targetSlide({required FreeBoxCamera targetCamera, required bool rightNow}) {
-    sbLogger(message: targetCamera.getActualPosition().toString());
     // 停止全部动画（同时会移除其他监听）。
     _stopAll();
     if (rightNow) {

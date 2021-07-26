@@ -1,8 +1,12 @@
+import 'package:demo/data/sqlite/modelbuilder/builder/creator/ModelCreator.dart';
+
 class ForeignKeyCreator {
-  ForeignKeyCreator(this.tableName, this.isDeleteFollowForeignKey);
+  ForeignKeyCreator(ModelCreator modelCreator, this.isDeleteFollowForeignKey) {
+    tableName = modelCreator.currentTableName;
+  }
 
   /// 外键对应的表名。
-  String tableName;
+  late String tableName;
 
   /// 当外键对应的外表 row 被删除时，是否同时删除当前 row。
   bool isDeleteFollowForeignKey;

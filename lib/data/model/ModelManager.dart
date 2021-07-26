@@ -1,62 +1,48 @@
-import '../Member.dart';
-import '../Util.dart';
-
-class ModelManagerContent {
-  ModelManagerContent({required this.folderPath});
-
-  final String folderPath;
-
-  // ============================================================================
-  String content() {
-    return '''
-    ${importContent()}
-    class ModelManager {
-      ${createEmptyModelByTableNameContent()}
-      ${queryRowsAsJsonsContent()}
-      ${queryRowsAsModelsContent()}
-    }
-    ''';
-  }
-
-  String importContent() {
-    String all = '';
-    for (int i = 0; i < modelFields.length; i++) {
-      all += '''
-      import '${toCamelCase(modelFields.keys.elementAt(i))}.dart';
-      ''';
-    }
-    return '''
-    import 'package:sqflite/sqflite.dart';
+        import 'package:sqflite/sqflite.dart';
     import 'package:demo/data/sqlite/sqliter/OpenSqlite.dart';
     import 'ModelBase.dart';
-    $all
-    ''';
-  }
-
-  // ============================================================================
-  String createEmptyModelByTableNameContent() {
-    String all = '';
-    for (int i = 0; i < modelFields.length; i++) {
-      all += '''
-      case '${modelFields.keys.elementAt(i)}':
-        return ${toCamelCase(modelFields.keys.elementAt(i))}() as T;
-      ''';
-    }
-    return '''
-    static T createEmptyModelByTableName<T extends ModelBase>(String tableName) {
+          import 'FComplete.dart';
+            import 'FFragment.dart';
+            import 'FMemory.dart';
+            import 'FRule.dart';
+            import 'AppVersionInfo.dart';
+            import 'User.dart';
+            import 'PnComplete.dart';
+            import 'PnFragment.dart';
+            import 'PnMemory.dart';
+            import 'PnRule.dart';
+      
+    
+    class ModelManager {
+          static T createEmptyModelByTableName<T extends ModelBase>(String tableName) {
       switch (tableName) {
-        $all
+              case 'f_complete':
+        return FComplete() as T;
+            case 'f_fragment':
+        return FFragment() as T;
+            case 'f_memory':
+        return FMemory() as T;
+            case 'f_rule':
+        return FRule() as T;
+            case 'app_version_info':
+        return AppVersionInfo() as T;
+            case 'user':
+        return User() as T;
+            case 'pn_complete':
+        return PnComplete() as T;
+            case 'pn_fragment':
+        return PnFragment() as T;
+            case 'pn_memory':
+        return PnMemory() as T;
+            case 'pn_rule':
+        return PnRule() as T;
+      
         default:
           throw 'unknown tableName: ' + tableName;
       }
     }
-    ''';
-  }
-
-  // ============================================================================
-  String queryRowsAsJsonsContent() {
-    return '''
-      /// 参数除了 connectTransaction，其他的与 db.query 相同
+    
+            /// 参数除了 connectTransaction，其他的与 db.query 相同
       static Future<List<Map<String, Object?>>> queryRowsAsJsons({
         required Transaction? connectTransaction,
         required String tableName,
@@ -97,13 +83,8 @@ class ModelManagerContent {
           offset: offset,
         );
       }
-    ''';
-  }
-
-// ============================================================================
-  String queryRowsAsModelsContent() {
-    return '''
-  /// [returnWhere]: 对每个 model 进行格外操作。
+    
+        /// [returnWhere]: 对每个 model 进行格外操作。
   static Future<List<M>> queryRowsAsModels<M extends ModelBase>({
     required Transaction? connectTransaction,
     required String tableName,
@@ -141,6 +122,6 @@ class ModelManagerContent {
     }
     return models;
   }
-    ''';
-  }
-}
+    
+    }
+    

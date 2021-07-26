@@ -1,14 +1,16 @@
 // ignore_for_file: non_constant_identifier_names
     import 'ModelBase.dart';
     
-class User implements ModelBase{
-    String get tableName => 'user';
+class PnMemory implements ModelBase{
+    String get tableName => 'pn_memory';
     
       String get id => 'id';
             String get aiid => 'aiid';
             String get uuid => 'uuid';
             String get created_at => 'created_at';
             String get updated_at => 'updated_at';
+            String get easy_position => 'easy_position';
+            String get title => 'title';
       
   final Map<String, Object?> _rowJson = <String, Object?>{};
   
@@ -20,13 +22,17 @@ class User implements ModelBase{
             String? get get_uuid => _rowJson['uuid'] as String?;
             int? get get_created_at => _rowJson['created_at'] as int?;
             int? get get_updated_at => _rowJson['updated_at'] as int?;
+            String? get get_easy_position => _rowJson['easy_position'] as String?;
+            String? get get_title => _rowJson['title'] as String?;
       
-  User createModel({
+  PnMemory createModel({
           required int? id,
                 required int? aiid,
                 required String? uuid,
                 required int? created_at,
                 required int? updated_at,
+                required String? easy_position,
+                required String? title,
         
   }) {
     _rowJson.addAll(
@@ -36,6 +42,8 @@ class User implements ModelBase{
               'uuid': uuid,
               'created_at': created_at,
               'updated_at': updated_at,
+              'easy_position': easy_position,
+              'title': title,
       
       },
     );
@@ -43,8 +51,7 @@ class User implements ModelBase{
   }
   
     Set<String> getDeleteManyForTwo() => <String>{
-              'user_info.user',
-        
+      
     };    
     
     Set<String> getDeleteManyForSingle() => <String>{

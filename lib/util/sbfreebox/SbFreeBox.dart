@@ -30,10 +30,10 @@ class SbFreeBox extends StatefulWidget {
   /// alignment
   final Alignment alignment;
 
-  /// 自由缩放层。必须使用 Stack + freeBoxPositioned()。
+  /// 自由缩放层。必须使用 [SbFreeBoxStack]。
   ///
   /// setState box，不会同时 setState 这个。
-  final SbFreeBoxStack freeMoveScaleLayerWidgets;
+  final Widget freeMoveScaleLayerWidgets;
 
   /// 固定层。必须使用 Stack + Position。
   ///

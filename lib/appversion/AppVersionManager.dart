@@ -1,4 +1,4 @@
-import 'package:demo/data/sqlite/model/AppVersionInfo.dart';
+import 'package:demo/data/model/AppVersionInfo.dart';
 import 'package:demo/data/sqlite/sqliter/OpenSqlite.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 

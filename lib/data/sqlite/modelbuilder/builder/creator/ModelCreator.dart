@@ -8,8 +8,7 @@ abstract class ModelCreator {
       <String, Map<String, List<String>>>{
         currentTableName: <String, List<String>>{
           ...() {
-            final Map<String, List<String>> fieldsMap =
-                <String, List<String>>{};
+            final Map<String, List<String>> fieldsMap = <String, List<String>>{};
             for (final FieldCreator field in defaultFields) {
               fieldsMap.addAll(setField(field));
             }
@@ -25,7 +24,17 @@ abstract class ModelCreator {
     );
   }
 
-  String get currentTableName;
+  String get currentTableName {
+    final String className = runtimeType.toString();
+    final String noM = className.substring(1, className.length);
+    final String fina = noM.replaceAllMapped(
+      RegExp('[A-Z]'),
+      (Match match) {
+        return '_' + match.group(0)!.toLowerCase();
+      },
+    );
+    return fina.substring(1,fina.length);
+  }
 
   List<FieldCreator> get fields;
 
@@ -102,8 +111,7 @@ abstract class ModelCreator {
         <String, Map<String, String>>{currentTableName: <String, String>{}},
       );
     }
-    if (!foreignKeyBelongsToObj[currentTableName]!
-        .containsKey(field.fieldNameNoSuffix)) {
+    if (!foreignKeyBelongsToObj[currentTableName]!.containsKey(field.fieldNameNoSuffix)) {
       foreignKeyBelongsToObj[currentTableName]!.addAll(
         <String, String>{
           field.fieldNameNoSuffix: field.foreignKey!.tableName,
@@ -129,8 +137,7 @@ abstract class ModelCreator {
         },
       );
     }
-    if (!foreignKeyHaveManyObj[field.foreignKey!.tableName]!
-        .contains('$currentTableName.${field.fieldNameNoSuffix}')) {
+    if (!foreignKeyHaveManyObj[field.foreignKey!.tableName]!.contains('$currentTableName.${field.fieldNameNoSuffix}')) {
       foreignKeyHaveManyObj[field.foreignKey!.tableName]!.add(
         '$currentTableName.${field.fieldNameNoSuffix}',
       );
@@ -157,10 +164,8 @@ abstract class ModelCreator {
         },
       );
     }
-    if (!deleteObj[field.foreignKey!.tableName]!
-        .contains('$currentTableName.${field.fieldNameNoSuffix}')) {
-      deleteObj[field.foreignKey!.tableName]!
-          .add('$currentTableName.${field.fieldNameNoSuffix}');
+    if (!deleteObj[field.foreignKey!.tableName]!.contains('$currentTableName.${field.fieldNameNoSuffix}')) {
+      deleteObj[field.foreignKey!.tableName]!.add('$currentTableName.${field.fieldNameNoSuffix}');
     }
   }
 }

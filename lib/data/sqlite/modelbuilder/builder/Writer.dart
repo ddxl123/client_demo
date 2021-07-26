@@ -2,42 +2,55 @@
 
 import 'dart:io';
 
+import 'package:demo/data/sqlite/modelbuilder/builder/ModelList.dart';
 
 import 'Member.dart';
+import 'Util.dart';
 import 'content/ModelBaseContent.dart';
 import 'content/ModelContent.dart';
+import 'content/ModelListContent.dart';
 import 'content/ModelManagerContent.dart';
 import 'content/ParseIntoSqlsContent.dart';
-import 'content/Util.dart';
-import 'creator/ModelCreator.dart';
 
 class Writer {
   Writer({
-    required this.folderPath,
-    required this.models,
+    required this.outModelFolderPath,
   }) {
     writer();
   }
 
-  /// 要输出的文件夹的绝对路径。
-  String folderPath;
-  List<ModelCreator> models;
+  /// 要输出的文件夹的 [绝对路径]。
+  String outModelFolderPath;
+
+  /// 主函数所在文件夹下的绝对路径。
+  String get mainFolderPath => (Platform.script.pathSegments.toList()..removeLast()).join('/') + '/';
+
+  String get outModelListPath => mainFolderPath + 'builder/ModelList.dart';
 
   Future<void> writer() async {
-    await setPath();
+    await setModelPath();
+    await runWriteModelList();
     await runWriteModels();
     await runWriteModelBase();
     await runWriteModelManager();
     await runParseIntoSqls();
   }
 
-  Future<void> setPath() async {
+  Future<void> setModelPath() async {
     // ignore: avoid_slow_async_io
-    if (await Directory(folderPath).exists()) {
+    if (await Directory(outModelFolderPath).exists()) {
       throw '文件夹已存在！';
     } else {
-      await Directory(folderPath).create();
+      await Directory(outModelFolderPath).create();
     }
+  }
+
+  Future<void> runWriteModelList() async {
+    // 写入对象。
+    await File(outModelListPath).writeAsString(ModelListContent().content());
+    print('ModelList file is created successfully!');
+    // 创建写入的对象来执行任务。
+    ModelList();
   }
 
   Future<void> runWriteModels() async {
@@ -45,23 +58,19 @@ class Writer {
       final String tableName = modelFields.keys.elementAt(i);
       final Map<String, List<Object>> fields = modelFields[tableName]!;
 
-      await File('$folderPath/${toCamelCase(tableName)}.dart').writeAsString(
-          ModelContent(
-                  folderPath: folderPath, tableName: tableName, fields: fields)
-              .content());
+      await File('$outModelFolderPath/${toCamelCase(tableName)}.dart')
+          .writeAsString(ModelContent(folderPath: outModelFolderPath, tableName: tableName, fields: fields).content());
       print("Named '$tableName''s model file is created successfully!");
     }
   }
 
   Future<void> runWriteModelBase() async {
-    await File('$folderPath/ModelBase.dart')
-        .writeAsString(ModelBaseContent(folderPath: folderPath).content());
+    await File('$outModelFolderPath/ModelBase.dart').writeAsString(ModelBaseContent(folderPath: outModelFolderPath).content());
     print("'ModelBase' file is created successfully!");
   }
 
   Future<void> runWriteModelManager() async {
-    await File('$folderPath/ModelManager.dart')
-        .writeAsString(ModelManagerContent(folderPath: folderPath).content());
+    await File('$outModelFolderPath/ModelManager.dart').writeAsString(ModelManagerContent(folderPath: outModelFolderPath).content());
     print("'ModelManager' file is created successfully!");
   }
 
@@ -69,29 +78,24 @@ class Writer {
     final Map<String, String> rawSqls = <String, String>{};
     modelFields.forEach(
       (String tableName, Map<String, List<String>> fieldTypes) {
-        String rawFieldsSql =
-            ''; // 最终: "CREATE TABLE table_name (username TEXT UNIQUE,password TEXT,),"
+        String rawFieldsSql = ''; // 最终: "CREATE TABLE table_name (username TEXT UNIQUE,password TEXT,),"
         fieldTypes.forEach(
           (String fieldName, List<String> fieldTypes) {
             String rawFieldSql = fieldName;
-            final List<String> newFieldTypes =
-                fieldTypes.sublist(0, fieldTypes.length - 1);
+            final List<String> newFieldTypes = fieldTypes.sublist(0, fieldTypes.length - 1);
             for (final String fieldType in newFieldTypes) {
               rawFieldSql += ' ' + fieldType; // 形成 "username TEXT UNIQUE,"
             }
-            rawFieldsSql +=
-                '$rawFieldSql,'; // 形成 "username TEXT UNIQUE,password TEXT,"
+            rawFieldsSql += '$rawFieldSql,'; // 形成 "username TEXT UNIQUE,password TEXT,"
           },
         );
         rawFieldsSql = rawFieldsSql.replaceAll(RegExp(r',$'), ''); // 去掉结尾逗号
-        rawSqls.addAll(<String, String>{
-          tableName: 'CREATE TABLE $tableName ($rawFieldsSql)'
-        }); // 形成 "CREATE TABLE table_name (username TEXT UNIQUE,password TEXT,),"
+        rawSqls.addAll(
+            <String, String>{tableName: 'CREATE TABLE $tableName ($rawFieldsSql)'}); // 形成 "CREATE TABLE table_name (username TEXT UNIQUE,password TEXT,),"
       },
     );
 
-    await File('$folderPath/ParseIntoSqls.dart').writeAsString(
-        ParseIntoSqlsContent(rawSqls: rawSqls).parseIntoSqlsContent());
+    await File('$outModelFolderPath/ParseIntoSqls.dart').writeAsString(ParseIntoSqlsContent(rawSqls: rawSqls).parseIntoSqlsContent());
     print("'ParseIntoSqls' file is created successfully!");
   }
 }

@@ -37,6 +37,12 @@ class SelectPoolRoute extends SbRoute {
                 Get.back<SbPopResult>(result: SbPopResult(popResultSelect: PopResultSelect.one, value: FragmentPoolType.complete));
               },
             ),
+            TextButton(
+              child: const Text('规则池'),
+              onPressed: () {
+                Get.back<SbPopResult>(result: SbPopResult(popResultSelect: PopResultSelect.one, value: FragmentPoolType.rule));
+              },
+            ),
           ],
         ),
       ),

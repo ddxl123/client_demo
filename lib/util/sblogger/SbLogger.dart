@@ -16,7 +16,16 @@ Future<void> sbLogger({
   final String package = '(package:' + st.split('(package:')[2].split(')')[0] + ')';
 
   final String messageValue = message ?? '';
-  final String indentValue = indent == null ? '' : '\n' + const JsonEncoder.withIndent('  ').convert(indent);
+  String indentValue = '';
+  if (indent == null) {
+    indentValue = '';
+  } else {
+    try {
+      indentValue = '\n' + const JsonEncoder.withIndent('  ').convert(indent);
+    } catch (e) {
+      indentValue = indent.toString();
+    }
+  }
   log('> ' + messageValue + indentValue, error: exception);
   if (stackTrace != null) {
     log('', stackTrace: stackTrace);

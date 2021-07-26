@@ -1,15 +1,16 @@
 // ignore_for_file: non_constant_identifier_names
     import 'ModelBase.dart';
     
-class UserInfo implements ModelBase{
-    String get tableName => 'user_info';
+class PnRule implements ModelBase{
+    String get tableName => 'pn_rule';
     
       String get id => 'id';
             String get aiid => 'aiid';
             String get uuid => 'uuid';
             String get created_at => 'created_at';
             String get updated_at => 'updated_at';
-            String get user_aiid => 'user_aiid';
+            String get easy_position => 'easy_position';
+            String get title => 'title';
       
   final Map<String, Object?> _rowJson = <String, Object?>{};
   
@@ -21,15 +22,17 @@ class UserInfo implements ModelBase{
             String? get get_uuid => _rowJson['uuid'] as String?;
             int? get get_created_at => _rowJson['created_at'] as int?;
             int? get get_updated_at => _rowJson['updated_at'] as int?;
-            int? get get_user_aiid => _rowJson['user_aiid'] as int?;
+            String? get get_easy_position => _rowJson['easy_position'] as String?;
+            String? get get_title => _rowJson['title'] as String?;
       
-  UserInfo createModel({
+  PnRule createModel({
           required int? id,
                 required int? aiid,
                 required String? uuid,
                 required int? created_at,
                 required int? updated_at,
-                required int? user_aiid,
+                required String? easy_position,
+                required String? title,
         
   }) {
     _rowJson.addAll(
@@ -39,7 +42,8 @@ class UserInfo implements ModelBase{
               'uuid': uuid,
               'created_at': created_at,
               'updated_at': updated_at,
-              'user_aiid': user_aiid,
+              'easy_position': easy_position,
+              'title': title,
       
       },
     );

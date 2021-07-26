@@ -62,21 +62,25 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  SbFreeBoxStack _freeMoveScaleLayerWidgets() {
-    return SbFreeBoxStack(
-      builder: (BuildContext context, void Function(void Function()) bSetState) {
-        return <SbFreeBoxPositioned>[
-          for (int i = 0; i < _fragmentPoolGetController.currentPoolData.length; i++)
-            SbFreeBoxPositioned(
-              easyPosition: _fragmentPoolGetController.currentPoolData[i].getEasyPositionToOffset(),
-              child: TextButton(
-                child: Text(_fragmentPoolGetController.currentPoolData[i].title),
-                onPressed: () {
-                  sbLogger(message: _fragmentPoolGetController.currentPoolData[i].getEasyPositionToOffset().toString());
-                },
-              ),
-            ),
-        ];
+  Widget _freeMoveScaleLayerWidgets() {
+    return GetBuilder<FragmentPoolGetController>(
+      builder: (GetxController controller) {
+        return SbFreeBoxStack(
+          builder: (BuildContext context, void Function(void Function()) bSetState) {
+            return <SbFreeBoxPositioned>[
+              for (int i = 0; i < _fragmentPoolGetController.currentPoolData.length; i++)
+                SbFreeBoxPositioned(
+                  easyPosition: _fragmentPoolGetController.currentPoolData[i].getEasyPositionToOffset(),
+                  child: TextButton(
+                    child: Text(_fragmentPoolGetController.currentPoolData[i].getTitle()),
+                    onPressed: () {
+                      sbLogger(message: _fragmentPoolGetController.currentPoolData[i].getTitle());
+                    },
+                  ),
+                ),
+            ];
+          },
+        );
       },
     );
   }

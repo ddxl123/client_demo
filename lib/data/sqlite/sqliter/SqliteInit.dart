@@ -1,7 +1,9 @@
+import 'package:demo/Config.dart';
 import 'package:demo/appversion/AppVersionManager.dart';
 import 'package:demo/appversion/AppVersionStatus.dart';
-import 'package:demo/data/sqlite/model/AppVersionInfo.dart';
-import 'package:demo/data/sqlite/model/ParseIntoSqls.dart';
+import 'package:demo/data/model/AppVersionInfo.dart';
+import 'package:demo/data/model/ParseIntoSqls.dart';
+import 'package:demo/data/sqlite/sqliter/SqliteTest.dart';
 
 import 'OpenSqlite.dart';
 import 'SqliteDiag.dart';
@@ -32,15 +34,23 @@ class SqliteInit {
     // 打开 sqlite。
     await openDb();
 
-    // TODO: 清空数据，发布版本需要去除。
-    await SqliteTool().dropAllTable();
+    if (isDev) {
+      await SqliteTool().dropAllTable();
+    }
 
     // 检查应用是否第一次被打开: 根据 [version_info] 表是否存在进行检查
+    SqliteInitResult sqliteInitResult;
     if (await SqliteDiag().isTableExist(AppVersionInfo().tableName)) {
-      return await _noFirstInit();
+      sqliteInitResult = await _noFirstInit();
     } else {
-      return await _firstInit();
+      sqliteInitResult = await _firstInit();
     }
+
+    if (isDev) {
+      await SqliteTest().createTestData();
+    }
+  
+    return sqliteInitResult;
   }
 
   // 非第一次打开

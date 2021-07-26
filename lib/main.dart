@@ -4,7 +4,6 @@ import 'package:demo/vc/view/homepage/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
 void main() {
   runApp(MyApp());
 }
@@ -15,9 +14,7 @@ class MyApp extends StatelessWidget {
     return SbButtonApp(
       child: GetMaterialApp(
         home: AppInitPage(
-          child: Material(
-            child: HomePage(),
-          ),
+          builder: () => HomePage(),
         ),
       ),
     );
