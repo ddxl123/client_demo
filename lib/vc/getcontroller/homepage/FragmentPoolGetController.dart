@@ -1,9 +1,3 @@
-import 'package:demo/data/model/ModelBase.dart';
-import 'package:demo/data/model/ModelManager.dart';
-import 'package:demo/data/model/PnComplete.dart';
-import 'package:demo/data/model/PnFragment.dart';
-import 'package:demo/data/model/PnMemory.dart';
-import 'package:demo/data/model/PnRule.dart';
 import 'package:demo/data/vo/FragmentPoolNodeVO.dart';
 import 'package:demo/util/sbfreebox/SbFreeBoxController.dart';
 import 'package:flutter/cupertino.dart';
@@ -70,6 +64,12 @@ class FragmentPoolGetController extends GetxController {
     return FreeBoxCamera(easyPosition: Offset.zero, scale: 1);
   }
 
+  /// 给当前池添加新节点。
+  Future<void> insertNewNode(Offset position) async {
+    currentPoolData.add(await FragmentPoolNodeVO().insertAndGetVo(currentPoolType,position));
+    update();
+  }
+
   /// 跳转到指定碎片池。
   ///
   /// 若当前池就是 [toPoolType]，则会重新进入当前池。
@@ -93,27 +93,8 @@ class FragmentPoolGetController extends GetxController {
 
     // 设置 [currentPoolData]。
     currentPoolData.clear();
-    Future<void> query(String tableName) async {
-      final List<ModelBase> pns = await ModelManager.queryRowsAsModels(connectTransaction: null, tableName: tableName);
-      currentPoolData.addAll(FragmentPoolNodeVO().froms(pns));
-    }
+    currentPoolData.addAll(await FragmentPoolNodeVO().queryAll(toPoolType));
 
-    switch (toPoolType) {
-      case FragmentPoolType.fragment:
-        await query(PnFragment().tableName);
-        break;
-      case FragmentPoolType.memory:
-        await query(PnMemory().tableName);
-        break;
-      case FragmentPoolType.complete:
-        await query(PnComplete().tableName);
-        break;
-      case FragmentPoolType.rule:
-        await query(PnRule().tableName);
-        break;
-      default:
-        throw 'unknown poolType: $toPoolType';
-    }
     // 全部成功后，设置 [currentPoolType]。
     currentPoolType = toPoolType;
 

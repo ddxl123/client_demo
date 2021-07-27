@@ -7,7 +7,7 @@ import 'dart:developer';
 /// [exception] 需要输出的异常。
 /// [stackTrace] 异常捕获的第二个参数。
 Future<void> sbLogger({
-  String? message,
+  Object? message,
   Object? indent,
   Object? exception,
   StackTrace? stackTrace,
@@ -15,7 +15,7 @@ Future<void> sbLogger({
   final String st = StackTrace.current.toString();
   final String package = '(package:' + st.split('(package:')[2].split(')')[0] + ')';
 
-  final String messageValue = message ?? '';
+  final Object messageValue = message ?? '';
   String indentValue = '';
   if (indent == null) {
     indentValue = '';
@@ -26,7 +26,7 @@ Future<void> sbLogger({
       indentValue = indent.toString();
     }
   }
-  log('> ' + messageValue + indentValue, error: exception);
+  log('> ' + messageValue.toString() + indentValue, error: exception);
   if (stackTrace != null) {
     log('', stackTrace: stackTrace);
   } else {

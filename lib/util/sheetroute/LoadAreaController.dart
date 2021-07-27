@@ -1,0 +1,20 @@
+enum LoadAreaStatus { loading, noMore, fail }
+
+extension SheetLoadAreaStatusExtension on LoadAreaStatus {
+  String get text {
+    switch (index) {
+      case 0:
+        return 'loading';
+      case 1:
+        return 'noMore';
+      case 2:
+        return 'fail';
+      default:
+        throw 'SheetLoadAreaStatusExtension err';
+    }
+  }
+}
+
+class LoadAreaController {
+  LoadAreaStatus loadAreaStatus = LoadAreaStatus.noMore;
+}

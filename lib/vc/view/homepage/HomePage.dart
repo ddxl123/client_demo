@@ -1,11 +1,15 @@
 import 'package:demo/global/Global.dart';
+import 'package:demo/util/sbbutton/SbButton.dart';
 import 'package:demo/util/sbfreebox/SbFreeBox.dart';
 import 'package:demo/util/sbfreebox/SbFreeBoxWidget.dart';
 import 'package:demo/util/sblogger/SbLogger.dart';
 import 'package:demo/vc/getcontroller/homepage/FragmentPoolGetController.dart';
 import 'package:demo/vc/getcontroller/homepage/HomePageGetController.dart';
+import 'package:demo/vc/view/homepage/LongPressFragmentPoolRoute.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import 'nodesheetroute/NodeSheetRoute.dart';
 
 class HomePage extends StatelessWidget {
   final HomePageGetController _homePageController = Get.put(HomePageGetController());
@@ -13,11 +17,16 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SbFreeBox(
-      sbFreeBoxController: _homePageController.sbFreeBoxController,
-      boxSize: Size(screenSize.width, screenSize.height),
-      fixedLayerWidgets: _fixedLayerWidgets(context),
-      freeMoveScaleLayerWidgets: _freeMoveScaleLayerWidgets(),
+    return SbButton(
+      child: SbFreeBox(
+        sbFreeBoxController: _homePageController.sbFreeBoxController,
+        boxSize: Size(screenSize.width, screenSize.height),
+        fixedLayerWidgets: _fixedLayerWidgets(context),
+        freeMoveScaleLayerWidgets: _freeMoveScaleLayerWidgets(),
+      ),
+      onLongPressed: (PointerDownEvent event) {
+        navigator!.push<dynamic>(LongPressFragmentPoolRoute());
+      },
     );
   }
 
@@ -71,10 +80,15 @@ class HomePage extends StatelessWidget {
               for (int i = 0; i < _fragmentPoolGetController.currentPoolData.length; i++)
                 SbFreeBoxPositioned(
                   easyPosition: _fragmentPoolGetController.currentPoolData[i].getEasyPositionToOffset(),
-                  child: TextButton(
-                    child: Text(_fragmentPoolGetController.currentPoolData[i].getTitle()),
-                    onPressed: () {
+                  child: SbButton(
+                    child: Material(
+                      child: Text(_fragmentPoolGetController.currentPoolData[i].getTitle()),
+                    ),
+                    onLongPressed: (_) {
                       sbLogger(message: _fragmentPoolGetController.currentPoolData[i].getTitle());
+                    },
+                    onUp: (_) {
+                      navigator!.push(NodeSheetRoute());
                     },
                   ),
                 ),

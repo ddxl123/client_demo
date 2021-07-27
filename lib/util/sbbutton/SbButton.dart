@@ -46,8 +46,8 @@ class SbButtonApp extends StatelessWidget {
 /// 当 [SbButton] 被触发 setState，并不会 setState child，因为 child 是一个对象
 ///
 /// [isIndependentOnDown]\[isIndependentOnUp]\[isIndependentOnLongPressed]：是否为独立 button。
-///   - 若为 true，则当前 button 为独立组件。
-///   - 若为 false，则会从顶层向底层依次迭代事件。为 false 时，顶层 Widget (MaterialApp) 必须被当前组件包裹。
+///   - 若为 true，嵌套 [SbButton] 时，无论该 [SbButton] 处在那一层，只要触发必然触发事件。
+///   - 若为 false，嵌套 [SbButton] 只会触发最上层的事件。为 false 时，顶层 [MaterialApp] 必须被 [SbButtonApp] 包裹。
 ///
 /// [backgroundColor]：正常情况下的背景颜色。
 ///

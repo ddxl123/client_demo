@@ -1,4 +1,3 @@
-import 'package:demo/util/sblogger/SbLogger.dart';
 import 'package:flutter/material.dart';
 
 import 'Global.dart';
@@ -149,8 +148,7 @@ class SbFreeBoxController {
   ///
   /// 注意，是基于 [screenPosition]\ [position]\[scale] 属性定位。
   Offset screenToBoxActual(Offset screenPosition) {
-    // return (screenPosition - freeBoxCamera.position) / freeBoxCamera.scale - sbFreeBoxBodyOffset;
-    return (screenPosition - freeBoxCamera.getActualPosition()) / freeBoxCamera.scale;
+    return (screenPosition - freeBoxCamera.getActualPosition()) / freeBoxCamera.scale - sbFreeBoxBodyOffset;
   }
 
   /// 滑动至目标位置。
