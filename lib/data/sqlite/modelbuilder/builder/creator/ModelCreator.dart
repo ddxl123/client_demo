@@ -25,15 +25,19 @@ abstract class ModelCreator {
   }
 
   String get currentTableName {
+    // 获取模型创建类名。
     final String className = runtimeType.toString();
-    final String noM = className.substring(1, className.length);
-    final String fina = noM.replaceAllMapped(
+    // 去掉前缀 'C' 。
+    final String noC = className.substring(1, className.length);
+    // 替换成下划线格式。
+    final String fina = noC.replaceAllMapped(
       RegExp('[A-Z]'),
       (Match match) {
         return '_' + match.group(0)!.toLowerCase();
       },
     );
-    return fina.substring(1,fina.length);
+    // 去掉多余的前缀下划线。
+    return fina.substring(1, fina.length);
   }
 
   List<FieldCreator> get fields;

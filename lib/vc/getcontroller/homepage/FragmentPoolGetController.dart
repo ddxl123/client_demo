@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:demo/data/vo/FragmentPoolNodeVO.dart';
 import 'package:demo/util/sbfreebox/SbFreeBoxController.dart';
 import 'package:flutter/cupertino.dart';
@@ -64,9 +66,30 @@ class FragmentPoolGetController extends GetxController {
     return FreeBoxCamera(easyPosition: Offset.zero, scale: 1);
   }
 
+  FutureOr<T?> select<T>({
+    required FragmentPoolType fragmentPoolType,
+    required FutureOr<T?> fragmentPoolCallback(),
+    required FutureOr<T?> memoryPoolCallback(),
+    required FutureOr<T?> completePoolCallback(),
+    required FutureOr<T?> rulePoolCallback(),
+  }) async {
+    switch (fragmentPoolType) {
+      case FragmentPoolType.fragment:
+        return await fragmentPoolCallback();
+      case FragmentPoolType.memory:
+        return await memoryPoolCallback();
+      case FragmentPoolType.complete:
+        return await completePoolCallback();
+      case FragmentPoolType.rule:
+        return await rulePoolCallback();
+      default:
+        throw 'unknown fragmentPoolType: $fragmentPoolType';
+    }
+  }
+
   /// 给当前池添加新节点。
   Future<void> insertNewNode(Offset position) async {
-    currentPoolData.add(await FragmentPoolNodeVO().insertAndGetVo(currentPoolType,position));
+    currentPoolData.add(await FragmentPoolNodeVO().insertAndGetVo(currentPoolType, position, this));
     update();
   }
 
@@ -93,7 +116,7 @@ class FragmentPoolGetController extends GetxController {
 
     // 设置 [currentPoolData]。
     currentPoolData.clear();
-    currentPoolData.addAll(await FragmentPoolNodeVO().queryAll(toPoolType));
+    currentPoolData.addAll(await FragmentPoolNodeVO().queryAll(toPoolType, this));
 
     // 全部成功后，设置 [currentPoolType]。
     currentPoolType = toPoolType;

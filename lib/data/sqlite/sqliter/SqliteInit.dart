@@ -1,7 +1,7 @@
 import 'package:demo/Config.dart';
 import 'package:demo/appversion/AppVersionManager.dart';
 import 'package:demo/appversion/AppVersionStatus.dart';
-import 'package:demo/data/model/AppVersionInfo.dart';
+import 'package:demo/data/model/MAppVersionInfo.dart';
 import 'package:demo/data/model/ParseIntoSqls.dart';
 import 'package:demo/data/sqlite/sqliter/SqliteTest.dart';
 
@@ -40,7 +40,7 @@ class SqliteInit {
 
     // 检查应用是否第一次被打开: 根据 [version_info] 表是否存在进行检查
     SqliteInitResult sqliteInitResult;
-    if (await SqliteDiag().isTableExist(AppVersionInfo().tableName)) {
+    if (await SqliteDiag().isTableExist(MAppVersionInfo().tableName)) {
       sqliteInitResult = await _noFirstInit();
     } else {
       sqliteInitResult = await _firstInit();
@@ -49,7 +49,7 @@ class SqliteInit {
     if (isDev) {
       await SqliteTest().createTestData();
     }
-  
+
     return sqliteInitResult;
   }
 
@@ -88,9 +88,8 @@ class SqliteInit {
     await SqliteTool().createAllTables(ParseIntoSqls().parseIntoSqls);
 
     // 创建 [version_infos] 信息
-    final AppVersionInfo appVersionInfo = AppVersionInfo();
     final String currentAppVersion = await AppVersionManager().getCurrentAppVersion();
-    appVersionInfo.createModel(
+    final MAppVersionInfo appVersionInfo = MAppVersionInfo.createModel(
       id: null,
       aiid: null,
       uuid: null,

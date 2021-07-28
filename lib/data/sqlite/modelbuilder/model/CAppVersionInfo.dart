@@ -2,7 +2,7 @@ import '../builder/Type.dart';
 import '../builder/creator/FieldCreator.dart';
 import '../builder/creator/ModelCreator.dart';
 
-class MAppVersionInfo extends ModelCreator {
+class CAppVersionInfo extends ModelCreator {
 
   @override
   List<FieldCreator> get fields {

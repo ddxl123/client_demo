@@ -1,41 +1,44 @@
         import 'package:sqflite/sqflite.dart';
     import 'package:demo/data/sqlite/sqliter/OpenSqlite.dart';
     import 'ModelBase.dart';
-          import 'FComplete.dart';
-            import 'FFragment.dart';
-            import 'FMemory.dart';
-            import 'FRule.dart';
-            import 'AppVersionInfo.dart';
-            import 'User.dart';
-            import 'PnComplete.dart';
-            import 'PnFragment.dart';
-            import 'PnMemory.dart';
-            import 'PnRule.dart';
+          import 'MAppVersionInfo.dart';
+            import 'MUpload.dart';
+            import 'MUser.dart';
+            import 'MFComplete.dart';
+            import 'MFFragment.dart';
+            import 'MFMemory.dart';
+            import 'MFRule.dart';
+            import 'MPnComplete.dart';
+            import 'MPnFragment.dart';
+            import 'MPnMemory.dart';
+            import 'MPnRule.dart';
       
     
     class ModelManager {
           static T createEmptyModelByTableName<T extends ModelBase>(String tableName) {
       switch (tableName) {
-              case 'f_complete':
-        return FComplete() as T;
-            case 'f_fragment':
-        return FFragment() as T;
-            case 'f_memory':
-        return FMemory() as T;
-            case 'f_rule':
-        return FRule() as T;
-            case 'app_version_info':
-        return AppVersionInfo() as T;
+              case 'app_version_info':
+        return MAppVersionInfo() as T;
+            case 'upload':
+        return MUpload() as T;
             case 'user':
-        return User() as T;
+        return MUser() as T;
+            case 'f_complete':
+        return MFComplete() as T;
+            case 'f_fragment':
+        return MFFragment() as T;
+            case 'f_memory':
+        return MFMemory() as T;
+            case 'f_rule':
+        return MFRule() as T;
             case 'pn_complete':
-        return PnComplete() as T;
+        return MPnComplete() as T;
             case 'pn_fragment':
-        return PnFragment() as T;
+        return MPnFragment() as T;
             case 'pn_memory':
-        return PnMemory() as T;
+        return MPnMemory() as T;
             case 'pn_rule':
-        return PnRule() as T;
+        return MPnRule() as T;
       
         default:
           throw 'unknown tableName: ' + tableName;

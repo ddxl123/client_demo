@@ -22,7 +22,7 @@ class ModelManagerContent {
     String all = '';
     for (int i = 0; i < modelFields.length; i++) {
       all += '''
-      import '${toCamelCase(modelFields.keys.elementAt(i))}.dart';
+      import 'M${toCamelCase(modelFields.keys.elementAt(i))}.dart';
       ''';
     }
     return '''
@@ -39,7 +39,7 @@ class ModelManagerContent {
     for (int i = 0; i < modelFields.length; i++) {
       all += '''
       case '${modelFields.keys.elementAt(i)}':
-        return ${toCamelCase(modelFields.keys.elementAt(i))}() as T;
+        return M${toCamelCase(modelFields.keys.elementAt(i))}() as T;
       ''';
     }
     return '''

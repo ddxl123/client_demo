@@ -16,13 +16,20 @@ abstract class SbSheetRoute<T, M> extends OverlayRoute<Object?> {
   /// [bodyData]：可改变该数组元素（不能改变地址），比如增删改。
   ///
   /// [mark]：对数据源进行标记，以便加载更多时获取到的是 [mark] 为起点之后的数据。
-  Future<BodyDataFutureResult> bodyDataFuture(List<T> bodyData, Mark<M> mark);
+  Future<void> bodyDataFuture(List<T> bodyData, Mark<M> mark);
 
   /// [headerSliver]：返回值必须是一个 sliver
   Widget headerSliver();
 
   /// [bodySliver]：返回值必须是一个 sliver
   Widget bodySliver();
+
+  /// 加载区 Widget。
+  Widget loadingWidget();
+
+  Widget noMoreWidget();
+
+  Widget failureWidget();
 
   /// [pop] 方式。
   void popMethod();

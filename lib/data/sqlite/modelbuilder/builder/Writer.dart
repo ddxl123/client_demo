@@ -58,7 +58,8 @@ class Writer {
       final String tableName = modelFields.keys.elementAt(i);
       final Map<String, List<Object>> fields = modelFields[tableName]!;
 
-      await File('$outModelFolderPath/${toCamelCase(tableName)}.dart')
+      // 注意加上前缀 'M'。
+      await File('$outModelFolderPath/M${toCamelCase(tableName)}.dart')
           .writeAsString(ModelContent(folderPath: outModelFolderPath, tableName: tableName, fields: fields).content());
       print("Named '$tableName''s model file is created successfully!");
     }

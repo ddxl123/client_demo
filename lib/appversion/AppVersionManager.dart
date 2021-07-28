@@ -1,4 +1,4 @@
-import 'package:demo/data/model/AppVersionInfo.dart';
+import 'package:demo/data/model/MAppVersionInfo.dart';
 import 'package:demo/data/sqlite/sqliter/OpenSqlite.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -12,7 +12,7 @@ class AppVersionManager {
   /// 获取被保存在本地应用版本
   /// - **前提: sqlite 数据库中必须存在 version_infos 表，且值必然不为 null**
   Future<String> _getSavedAppVersion() async {
-    final AppVersionInfo appVersionInfo = AppVersionInfo();
+    final MAppVersionInfo appVersionInfo = MAppVersionInfo();
     final String savedVersion = (await db.query(appVersionInfo.tableName, limit: 1)).first[appVersionInfo.saved_version]! as String;
     return savedVersion.toString();
   }

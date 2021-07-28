@@ -33,6 +33,10 @@ class _SbSheetRouteWidgetState<T, M> extends State<SbSheetRouteWidget<T, M>> wit
       }
     };
 
+    sheetPageController.loadAreaController.loadingWidget = widget.sbSheetPage.loadingWidget;
+    sheetPageController.loadAreaController.noMoreWidget = widget.sbSheetPage.noMoreWidget;
+    sheetPageController.loadAreaController.failureWidget = widget.sbSheetPage.failureWidget;
+
     sheetPageController.popMethod = widget.sbSheetPage.popMethod;
 
     // 创建动画控制器。
@@ -145,7 +149,7 @@ class _SbSheetRouteWidgetState<T, M> extends State<SbSheetRouteWidget<T, M>> wit
         };
       },
       builder: (State state) {
-        return LoadAreaWidget<T, M>(sheetPageController);
+        return LoadAreaWidget<T, M>(sheetPageController.loadAreaController);
       },
     );
   }

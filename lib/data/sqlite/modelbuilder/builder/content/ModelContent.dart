@@ -16,14 +16,15 @@ class ModelContent {
     return '''
 // ignore_for_file: non_constant_identifier_names
 ${importContent()}
-class ${toCamelCase(tableName)} implements ModelBase{
+class M${toCamelCase(tableName)} implements ModelBase{
+${createModelContent()}
 ${tableNameContent()}
 ${fieldNamesContent()}
 ${rowJsonContent()}
 ${getContent()}
-${createModelContent()}
-${getDeleteManyForTwo()}
-${getDeleteManyForSingle()}
+${getDeleteManyForTwoContent()}
+${getDeleteManyForSingleContent()}
+${insertDbContent()}
 }
 ''';
   }
@@ -31,6 +32,7 @@ ${getDeleteManyForSingle()}
   // ============================================================================
   String importContent() {
     return '''
+    import 'package:demo/data/sqlite/sqliter/OpenSqlite.dart';
     import 'ModelBase.dart';
     ''';
   }
@@ -89,7 +91,8 @@ ${getDeleteManyForSingle()}
     }
 
     return '''
-  ${toCamelCase(tableName)} createModel({
+  M${toCamelCase(tableName)}();
+  M${toCamelCase(tableName)}.createModel({
   $input
   }) {
     _rowJson.addAll(
@@ -97,13 +100,12 @@ ${getDeleteManyForSingle()}
         $out
       },
     );
-    return this;
   }
   ''';
   }
 
   // ============================================================================
-  String getDeleteManyForTwo() {
+  String getDeleteManyForTwoContent() {
     String all = '';
 
     if (deleteManyForTwo.containsKey(tableName)) {
@@ -121,7 +123,7 @@ ${getDeleteManyForSingle()}
   }
 
   // ============================================================================
-  String getDeleteManyForSingle() {
+  String getDeleteManyForSingleContent() {
     String all = '';
 
     if (deleteManyForSingle.containsKey(tableName)) {
@@ -135,6 +137,15 @@ ${getDeleteManyForSingle()}
     Set<String> getDeleteManyForSingle() => <String>{
       $all
     };    
+    ''';
+  }
+
+  // ============================================================================
+  String insertDbContent() {
+    return '''
+  Future<int> insertDb() async {
+    return await db.insert(tableName, _rowJson);
+  }
     ''';
   }
 }

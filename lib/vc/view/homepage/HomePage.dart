@@ -6,10 +6,9 @@ import 'package:demo/util/sblogger/SbLogger.dart';
 import 'package:demo/vc/getcontroller/homepage/FragmentPoolGetController.dart';
 import 'package:demo/vc/getcontroller/homepage/HomePageGetController.dart';
 import 'package:demo/vc/view/homepage/LongPressFragmentPoolRoute.dart';
+import 'package:demo/vc/view/homepage/nodesheetroute/NodeSheetRouteEntry.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import 'nodesheetroute/NodeSheetRoute.dart';
 
 class HomePage extends StatelessWidget {
   final HomePageGetController _homePageController = Get.put(HomePageGetController());
@@ -88,7 +87,7 @@ class HomePage extends StatelessWidget {
                       sbLogger(message: _fragmentPoolGetController.currentPoolData[i].getTitle());
                     },
                     onUp: (_) {
-                      navigator!.push(NodeSheetRoute());
+                      NodeSheetRouteEntry.enter();
                     },
                   ),
                 ),

@@ -30,7 +30,7 @@ class ModelListContent {
     // 相对 [ModelList.dart] 文件的 model.dart 文件路径。
     final List<String> importPaths = <String>[];
 
-    // 例子: AA()
+    // 例子: AA() --- 去掉了前缀 'C'。
     final List<String> classObj = <String>[];
 
     for (final FileSystemEntity fileSystemEntity in fileSystemEntities) {

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:demo/util/sblogger/SbLogger.dart';
 import 'package:demo/util/sheetroute/SbSheetRoute.dart';
 import 'package:demo/util/sheetroute/SbSheetRouteWidget.dart';
 import 'package:flutter/gestures.dart';
@@ -10,9 +11,6 @@ import 'LoadAreaController.dart';
 
 /// 滚动、触摸方向枚举
 enum Direction { idle, up, down }
-
-/// 数据获取结果枚举
-enum BodyDataFutureResult { success, fail }
 
 class Mark<M> {
   M? value;
@@ -184,7 +182,7 @@ class SbSheetPageController<T, M> extends ChangeNotifier {
 
   // =============================================================================
 
-  void animationControllerAddListener(Future<BodyDataFutureResult> bodyDataFuture(List<T> bodyData, Mark<M> mark)) {
+  void animationControllerAddListener(Future<void> bodyDataFuture(List<T> bodyData, Mark<M> mark)) {
     // 上一次 animationController.value。范围：0 ~ 1。
     double lastAnimationControllerValue = 0.0;
 
@@ -216,7 +214,7 @@ class SbSheetPageController<T, M> extends ChangeNotifier {
     });
   }
 
-  void scrollControllerAddListener(Future<BodyDataFutureResult> Function(List<T> bodyData, Mark<M> mark) bodyDataFuture) {
+  void scrollControllerAddListener(Future<void> Function(List<T> bodyData, Mark<M> mark) bodyDataFuture) {
     scrollController.addListener(() {
       //
       // 当前滚动方向。非手势滑动方向。
@@ -237,7 +235,7 @@ class SbSheetPageController<T, M> extends ChangeNotifier {
   }
 
   /// 异步加载数据
-  Future<void> dataLoad(Future<BodyDataFutureResult> Function(List<T> bodyData, Mark<M> mark) bodyDataFuture) async {
+  Future<void> dataLoad(Future<void> Function(List<T> bodyData, Mark<M> mark) bodyDataFuture) async {
     if (_isDataLoading) {
       return;
     }
@@ -246,14 +244,24 @@ class SbSheetPageController<T, M> extends ChangeNotifier {
     // 处于正在加载中
     loadAreaController.loadAreaStatus = LoadAreaStatus.loading;
     loadAreaSetState();
-    final BodyDataFutureResult bodyDataFutureResult = await bodyDataFuture(bodyData, mark);
 
-    if (bodyDataFutureResult == BodyDataFutureResult.success) {
+    bool isSuccess = false;
+    try {
+      // TODO: 需要去掉。
+      await Future<void>.delayed(const Duration(seconds: 1));
+      await bodyDataFuture(bodyData, mark);
+      isSuccess = true;
+    } catch (e, st) {
+      sbLogger(message: 'body data err: ', exception: e, stackTrace: st);
+      isSuccess = false;
+    }
+
+    if (isSuccess) {
       loadAreaController.loadAreaStatus = LoadAreaStatus.noMore;
       bodySetState();
       loadAreaSetState();
     } else {
-      loadAreaController.loadAreaStatus = LoadAreaStatus.fail;
+      loadAreaController.loadAreaStatus = LoadAreaStatus.failure;
       loadAreaSetState();
     }
 
