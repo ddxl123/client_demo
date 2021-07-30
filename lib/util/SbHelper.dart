@@ -1,5 +1,9 @@
 import 'dart:math';
 
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:uuid/uuid.dart';
+
 class SbHelper {
   /// 生成随机小数点后 1 位的正 double 值。
   ///
@@ -30,5 +34,25 @@ class SbHelper {
       result += all[randomInt(all.length)];
     }
     return result;
+  }
+
+  /// 生成 uuid。
+  String get newUuid => const Uuid().v4();
+
+  /// 生成当前时间戳。
+  int get newTimestamp => DateTime.now().millisecondsSinceEpoch;
+
+  /// 统一获取 get 插件的 navigator，以防引用包冲突。
+  NavigatorState? get getNavigator => navigator;
+
+  Offset? str2Offset(String? offsetStr) {
+    if (offsetStr == null) {
+      return null;
+    }
+    final List<String> posStr = offsetStr.split(',');
+    if (posStr.length != 2) {
+      throw 'length err!';
+    }
+    return Offset(double.parse(posStr.first), double.parse(posStr.last));
   }
 }

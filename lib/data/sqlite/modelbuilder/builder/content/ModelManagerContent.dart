@@ -10,6 +10,7 @@ class ModelManagerContent {
   String content() {
     return '''
     ${importContent()}
+    ${twoId()}
     class ModelManager {
       ${createEmptyModelByTableNameContent()}
       ${queryRowsAsJsonsContent()}
@@ -30,6 +31,33 @@ class ModelManagerContent {
     import 'package:demo/data/sqlite/sqliter/OpenSqlite.dart';
     import 'ModelBase.dart';
     $all
+    ''';
+  }
+
+  // ============================================================================
+  String twoId() {
+    return r'''
+class TwoId {
+  TwoId({
+    required String uuidKey,
+    required String aiidKey,
+    required String? uuidValue,
+    required int? aiidValue,
+  }) {
+    if (aiidValue != null && uuidValue == null) {
+      whereByTwoId = '$aiidKey = ?';
+      whereArgsByTwoId = <Object>[aiidValue];
+    } else if (aiidValue == null && uuidValue != null) {
+      whereByTwoId = '$uuidKey = ?';
+      whereArgsByTwoId = <Object>[uuidValue];
+    } else {
+      throw 'query by aiid and uuid err';
+    }
+  }
+
+  late String whereByTwoId;
+  late List<Object> whereArgsByTwoId;
+}
     ''';
   }
 
@@ -69,14 +97,15 @@ class ModelManagerContent {
         String? orderBy,
         int? limit,
         int? offset,
+        TwoId? byTwoId,
       }) async {
         if (connectTransaction != null) {
           return await connectTransaction.query(
             tableName,
             distinct: distinct,
             columns: columns,
-            where: where,
-            whereArgs: whereArgs,
+            where: where ?? byTwoId?.whereByTwoId,
+            whereArgs: whereArgs ?? byTwoId?.whereArgsByTwoId,
             groupBy: groupBy,
             having: having,
             orderBy: orderBy,
@@ -88,8 +117,8 @@ class ModelManagerContent {
           tableName,
           distinct: distinct,
           columns: columns,
-          where: where,
-          whereArgs: whereArgs,
+          where: where ?? byTwoId?.whereByTwoId,
+          whereArgs: whereArgs ?? byTwoId?.whereArgsByTwoId,
           groupBy: groupBy,
           having: having,
           orderBy: orderBy,
@@ -117,6 +146,7 @@ class ModelManagerContent {
     String? orderBy,
     int? limit,
     int? offset,
+    TwoId? byTwoId,
   }) async {
     final List<Map<String, Object?>> rows = await queryRowsAsJsons(
       connectTransaction: connectTransaction,
@@ -130,6 +160,7 @@ class ModelManagerContent {
       orderBy: orderBy,
       limit: limit,
       offset: offset,
+      byTwoId: byTwoId,
     );
 
     final List<M> models = <M>[];

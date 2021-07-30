@@ -12,11 +12,11 @@ import 'LoadAreaController.dart';
 /// 滚动、触摸方向枚举
 enum Direction { idle, up, down }
 
-class Mark<M> {
-  M? value;
+class Mark {
+  int value = 0;
 }
 
-class SbSheetPageController<T, M> extends ChangeNotifier {
+class SbSheetPageController<T> extends ChangeNotifier {
   ///
 
   // =============================================================================
@@ -69,7 +69,7 @@ class SbSheetPageController<T, M> extends ChangeNotifier {
   final List<T> bodyData = <T>[];
 
   /// 异步标记
-  final Mark<M> mark = Mark<M>();
+  final Mark mark = Mark();
 
   // =============================================================================
 
@@ -182,7 +182,7 @@ class SbSheetPageController<T, M> extends ChangeNotifier {
 
   // =============================================================================
 
-  void animationControllerAddListener(Future<void> bodyDataFuture(List<T> bodyData, Mark<M> mark)) {
+  void animationControllerAddListener(Future<void> bodyDataFuture(List<T> bodyData, Mark mark)) {
     // 上一次 animationController.value。范围：0 ~ 1。
     double lastAnimationControllerValue = 0.0;
 
@@ -214,7 +214,7 @@ class SbSheetPageController<T, M> extends ChangeNotifier {
     });
   }
 
-  void scrollControllerAddListener(Future<void> Function(List<T> bodyData, Mark<M> mark) bodyDataFuture) {
+  void scrollControllerAddListener(Future<void> Function(List<T> bodyData, Mark mark) bodyDataFuture) {
     scrollController.addListener(() {
       //
       // 当前滚动方向。非手势滑动方向。
@@ -235,7 +235,7 @@ class SbSheetPageController<T, M> extends ChangeNotifier {
   }
 
   /// 异步加载数据
-  Future<void> dataLoad(Future<void> Function(List<T> bodyData, Mark<M> mark) bodyDataFuture) async {
+  Future<void> dataLoad(Future<void> Function(List<T> bodyData, Mark mark) bodyDataFuture) async {
     if (_isDataLoading) {
       return;
     }

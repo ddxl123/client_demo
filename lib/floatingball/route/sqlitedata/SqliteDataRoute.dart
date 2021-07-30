@@ -89,13 +89,7 @@ class SqliteDataRoute extends SbRoute {
 
   @override
   Future<bool> whenPop(SbPopResult? popResult) async {
-    if (popResult == null) {
-      return true;
-    }
-    if (popResult.popResultSelect == PopResultSelect.clickBackground) {
-      return true;
-    }
-    return false;
+    return await quickWhenPop(popResult, (SbPopResult quickPopResult) async => false);
   }
 
   @override

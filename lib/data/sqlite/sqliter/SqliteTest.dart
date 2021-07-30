@@ -9,6 +9,7 @@ import 'package:demo/data/model/MPnMemory.dart';
 import 'package:demo/data/model/MPnRule.dart';
 import 'package:demo/util/SbHelper.dart';
 import 'package:demo/util/sblogger/SbLogger.dart';
+import 'package:uuid/uuid.dart';
 
 class SqliteTest {
   Future<void> _for({required int count, required Future<void> Function() insert}) async {
@@ -20,12 +21,12 @@ class SqliteTest {
   Future<void> createTestData() async {
     //
     await _for(
-      count: 100,
+      count: 5,
       insert: () async {
         await MPnFragment.createModel(
           id: null,
           aiid: null,
-          uuid: null,
+          uuid: SbHelper().newUuid,
           created_at: null,
           updated_at: null,
           used_rule_aiid: null,
@@ -35,12 +36,12 @@ class SqliteTest {
       },
     );
     await _for(
-      count: 100,
+      count: 5,
       insert: () async {
         await MPnMemory.createModel(
           id: null,
           aiid: null,
-          uuid: null,
+          uuid: SbHelper().newUuid,
           created_at: null,
           updated_at: null,
           easy_position: '${SbHelper().randomDouble(2000)},${SbHelper().randomDouble(2000)}',
@@ -49,12 +50,12 @@ class SqliteTest {
       },
     );
     await _for(
-      count: 100,
+      count: 5,
       insert: () async {
         await MPnComplete.createModel(
           id: null,
           aiid: null,
-          uuid: null,
+          uuid: SbHelper().newUuid,
           created_at: null,
           updated_at: null,
           easy_position: '${SbHelper().randomDouble(2000)},${SbHelper().randomDouble(2000)}',
@@ -63,12 +64,12 @@ class SqliteTest {
       },
     );
     await _for(
-      count: 100,
+      count: 5,
       insert: () async {
         await MPnRule.createModel(
           id: null,
           aiid: null,
-          uuid: null,
+          uuid: SbHelper().newUuid,
           created_at: null,
           updated_at: null,
           easy_position: '${SbHelper().randomDouble(2000)},${SbHelper().randomDouble(2000)}',
@@ -77,33 +78,33 @@ class SqliteTest {
       },
     );
 
-    await _for(
-      count: 100,
-      insert: () async {
-        await MFFragment.createModel(id: null, aiid: null, uuid: null, created_at: null, updated_at: null, title: SbHelper().randomString(10)).insertDb();
-      },
-    );
-
-    await _for(
-      count: 100,
-      insert: () async {
-        await MFMemory.createModel(id: null, aiid: null, uuid: null, created_at: null, updated_at: null, title: SbHelper().randomString(10)).insertDb();
-      },
-    );
-
-    await _for(
-      count: 100,
-      insert: () async {
-        await MFComplete.createModel(id: null, aiid: null, uuid: null, created_at: null, updated_at: null, title: SbHelper().randomString(10)).insertDb();
-      },
-    );
-
-    await _for(
-      count: 100,
-      insert: () async {
-        await MFRule.createModel(id: null, aiid: null, uuid: null, created_at: null, updated_at: null, title: SbHelper().randomString(10)).insertDb();
-      },
-    );
+    // await _for(
+    //   count: 5,
+    //   insert: () async {
+    //     await MFFragment.createModel(id: null, aiid: null, uuid: SbHelper().newUuid, created_at: null, updated_at: null, title: SbHelper().randomString(10)).insertDb();
+    //   },
+    // );
+    //
+    // await _for(
+    //   count: 5,
+    //   insert: () async {
+    //     await MFMemory.createModel(id: null, aiid: null, uuid: SbHelper().newUuid, created_at: null, updated_at: null, title: SbHelper().randomString(10)).insertDb();
+    //   },
+    // );
+    //
+    // await _for(
+    //   count: 5,
+    //   insert: () async {
+    //     await MFComplete.createModel(id: null, aiid: null, uuid: SbHelper().newUuid, created_at: null, updated_at: null, title: SbHelper().randomString(10)).insertDb();
+    //   },
+    // );
+    //
+    // await _for(
+    //   count: 5,
+    //   insert: () async {
+    //     await MFRule.createModel(id: null, aiid: null, uuid: SbHelper().newUuid, created_at: null, updated_at: null, title: SbHelper().randomString(10)).insertDb();
+    //   },
+    // );
     //
     sbLogger(message: '生成测试数据成功！');
   }

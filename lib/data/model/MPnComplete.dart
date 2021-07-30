@@ -52,7 +52,8 @@ class MPnComplete implements ModelBase{
             String? get get_title => _rowJson['title'] as String?;
       
     Set<String> getDeleteManyForTwo() => <String>{
-      
+              'f_complete.node',
+        
     };    
     
     Set<String> getDeleteManyForSingle() => <String>{

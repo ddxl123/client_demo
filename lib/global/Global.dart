@@ -1,6 +1,7 @@
 import 'dart:ui';
 
-import 'package:demo/vc/view/loginpage/LoginPage.dart';
+import 'package:demo/util/SbHelper.dart';
+import 'package:demo/muc/view/loginpage/LoginPage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -34,5 +35,5 @@ class SbRectWidget extends StatelessWidget {
 }
 
 void toLoginPage() {
-  navigator!.push(LoginPage());
+  SbHelper().getNavigator!.push(LoginPage());
 }

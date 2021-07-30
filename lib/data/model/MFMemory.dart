@@ -11,6 +11,8 @@ class MFMemory implements ModelBase{
                 required int? created_at,
                 required int? updated_at,
                 required String? title,
+                required int? node_aiid,
+                required String? node_uuid,
         
   }) {
     _rowJson.addAll(
@@ -21,6 +23,8 @@ class MFMemory implements ModelBase{
               'created_at': created_at,
               'updated_at': updated_at,
               'title': title,
+              'node_aiid': node_aiid,
+              'node_uuid': node_uuid,
       
       },
     );
@@ -34,6 +38,8 @@ class MFMemory implements ModelBase{
             String get created_at => 'created_at';
             String get updated_at => 'updated_at';
             String get title => 'title';
+            String get node_aiid => 'node_aiid';
+            String get node_uuid => 'node_uuid';
       
   final Map<String, Object?> _rowJson = <String, Object?>{};
   
@@ -46,6 +52,8 @@ class MFMemory implements ModelBase{
             int? get get_created_at => _rowJson['created_at'] as int?;
             int? get get_updated_at => _rowJson['updated_at'] as int?;
             String? get get_title => _rowJson['title'] as String?;
+            int? get get_node_aiid => _rowJson['node_aiid'] as int?;
+            String? get get_node_uuid => _rowJson['node_uuid'] as String?;
       
     Set<String> getDeleteManyForTwo() => <String>{
       

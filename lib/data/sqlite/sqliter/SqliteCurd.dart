@@ -1,6 +1,8 @@
 import 'package:demo/data/model/MUpload.dart';
 import 'package:demo/data/model/ModelBase.dart';
 import 'package:demo/data/model/ModelManager.dart';
+import 'package:demo/util/SbHelper.dart';
+import 'package:demo/util/sblogger/SbLogger.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'OpenSqlite.dart';
@@ -11,6 +13,9 @@ enum UploadStatus { notUploaded, uploading, uploaded }
 
 enum CheckResult {
   ok,
+
+  /// model id 为空，非 aiid/uuid
+  modelIdIsNull,
 
   /// model 不存在。
   modelIsNotExist,
@@ -54,7 +59,7 @@ enum CheckResult {
 /// 【上传队列】中所有属于同一事务的行需要做相同标记 [mark]，若重复再次执行，则需覆盖 [mark]。
 class TransactionMark {
   TransactionMark(this.transaction) {
-    mark = DateTime.now().millisecondsSinceEpoch;
+    mark = SbHelper().newTimestamp;
   }
 
   Transaction transaction;
@@ -89,7 +94,7 @@ class SqliteCurd<T extends ModelBase> {
   /// {@macro RSqliteCurd.updateRow}
   Future<T> updateRow({
     required String modelTableName,
-    required int modelId,
+    required int? modelId,
     required Map<String, Object?> updateContent,
     required TransactionMark? transactionMark,
   }) async {
@@ -109,7 +114,7 @@ class SqliteCurd<T extends ModelBase> {
   /// {@macro RSqliteCurd.deleteRow}
   ///
   /// 返回是否删除成功，捕获到异常返回 false
-  Future<void> deleteRow({required String modelTableName, required int modelId, required TransactionMark? transactionMark}) async {
+  Future<void> deleteRow({required String modelTableName, required int? modelId, required TransactionMark? transactionMark}) async {
     if (transactionMark == null) {
       // 开始事务。
       await db.transaction<void>(
@@ -170,8 +175,8 @@ class SqliteCurd<T extends ModelBase> {
       id: null,
       aiid: null,
       uuid: null,
-      created_at: DateTime.now().millisecondsSinceEpoch,
-      updated_at: DateTime.now().millisecondsSinceEpoch,
+      created_at: SbHelper().newTimestamp,
+      updated_at: SbHelper().newTimestamp,
       for_table_name: model.tableName,
       for_row_id: rowId,
       for_aiid: null,
@@ -205,7 +210,7 @@ class SqliteCurd<T extends ModelBase> {
   /// {@endtemplate}
   Future<T> _toUpdateRow({
     required String modelTableName,
-    required int modelId,
+    required int? modelId,
     required Map<String, Object?> updateContent,
     required TransactionMark transactionMark,
   }) async {
@@ -246,8 +251,8 @@ class SqliteCurd<T extends ModelBase> {
         id: null,
         aiid: null,
         uuid: null,
-        created_at: DateTime.now().millisecondsSinceEpoch,
-        updated_at: DateTime.now().millisecondsSinceEpoch,
+        created_at: SbHelper().newTimestamp,
+        updated_at: SbHelper().newTimestamp,
         for_table_name: newModel.tableName,
         for_row_id: newModel.get_id,
         for_aiid: newModel.get_aiid,
@@ -266,7 +271,7 @@ class SqliteCurd<T extends ModelBase> {
         uploadModel!.tableName,
         <String, Object?>{
           uploadModel!.updated_columns: allUpdatedColumns,
-          uploadModel!.updated_at: DateTime.now().millisecondsSinceEpoch,
+          uploadModel!.updated_at: SbHelper().newTimestamp,
           uploadModel!.mark: transactionMark.mark,
         },
         where: '${uploadModel!.id} = ?',
@@ -290,7 +295,7 @@ class SqliteCurd<T extends ModelBase> {
   /// - [modelId] 要删除的模型 id，非 aiid/uuid。
   ///
   /// {@endtemplate}
-  Future<void> _toDeleteRow({required String modelTableName, required int modelId, required TransactionMark transactionMark}) async {
+  Future<void> _toDeleteRow({required String modelTableName, required int? modelId, required TransactionMark transactionMark}) async {
     // 若为空必然抛异常，因此必然不可空。
     late T model;
     // uploadModel 可空，若不可空不会抛异常，而会做下面的判断。
@@ -320,8 +325,8 @@ class SqliteCurd<T extends ModelBase> {
         id: null,
         aiid: null,
         uuid: null,
-        created_at: DateTime.now().millisecondsSinceEpoch,
-        updated_at: DateTime.now().millisecondsSinceEpoch,
+        created_at: SbHelper().newTimestamp,
+        updated_at: SbHelper().newTimestamp,
         for_table_name: model.tableName,
         for_row_id: model.get_id,
         for_aiid: model.get_aiid,
@@ -351,7 +356,7 @@ class SqliteCurd<T extends ModelBase> {
         <String, Object?>{
           uploadModel!.curd_status: CurdStatus.D.index,
           uploadModel!.mark: transactionMark.mark,
-          uploadModel!.updated_at: DateTime.now().millisecondsSinceEpoch,
+          uploadModel!.updated_at: SbHelper().newTimestamp,
         },
       );
     }
@@ -373,11 +378,15 @@ class SqliteCurd<T extends ModelBase> {
   /// 当 sqlite 应该存在当前 [model] 时，获取并检验当前 [model] 以及对应的 [MUpload]。
   Future<CheckResult> _check({
     required String modelTableName,
-    required int modelId,
+    required int? modelId,
     required TransactionMark transactionMark,
     required void Function(T model) getModel,
     required void Function(MUpload uploadModel) getUploadModel,
   }) async {
+    if (modelId == null) {
+      return CheckResult.modelIdIsNull;
+    }
+
     // 获取要更新的 model
     final List<T> queryResult = await ModelManager.queryRowsAsModels(
       tableName: modelTableName,
@@ -432,6 +441,7 @@ class SqliteCurd<T extends ModelBase> {
 
   /// 筛选出需要同时删除的 关联该表的其他表对应的 row。
   Future<void> _toDeleteMany({required T model, required TransactionMark transactionMark}) async {
+
     // for single
     for (int i = 0; i < model.getDeleteManyForSingle().length; i++) {
       final List<String> fk = model.getDeleteManyForSingle().elementAt(i).split('.');
@@ -451,8 +461,8 @@ class SqliteCurd<T extends ModelBase> {
     }
 
     // for two
-    for (int i = 0; i < model.getDeleteManyForSingle().length; i++) {
-      final List<String> fk = model.getDeleteManyForSingle().elementAt(i).split('.');
+    for (int i = 0; i < model.getDeleteManyForTwo().length; i++) {
+      final List<String> fk = model.getDeleteManyForTwo().elementAt(i).split('.');
       if (fk.length != 2) {
         throw 'deleteMany for two err: $fk';
       }
@@ -495,7 +505,6 @@ class SqliteCurd<T extends ModelBase> {
       whereArgs: <Object>[fkColumnValue],
       connectTransaction: transactionMark.transaction,
     );
-
     // 把查询到的进行递归 delete
     for (int i = 0; i < queryResult.length; i++) {
       await SqliteCurd<ModelBase>().deleteRow(modelTableName: queryResult[i].tableName, modelId: queryResult[i].get_id!, transactionMark: transactionMark);

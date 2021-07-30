@@ -17,4 +17,11 @@ enum PopResultSelect {
   three,
   four,
   five,
+  six,
+  seven,
+  eight,
+  nine,
+  ten,
+  eleven,
+  twelve,
 }

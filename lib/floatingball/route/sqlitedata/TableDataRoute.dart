@@ -70,11 +70,7 @@ class TableDataRoute extends SbRoute {
 
   @override
   Future<bool> whenPop(SbPopResult? popResult) async {
-    if (popResult == null || popResult.popResultSelect == PopResultSelect.clickBackground) {
-      return true;
-    } else {
-      return false;
-    }
+    return await quickWhenPop(popResult, (SbPopResult quickPopResult) async => false);
   }
 
   @override

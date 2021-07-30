@@ -16,7 +16,9 @@ abstract class FieldCreator {
     /// 外键名规范检查。以及识别外键是 aiid/uuid 还是 id。
     if (foreignKey != null) {
       // 外键名必然是 _aiid/_uuid/_id 后缀。
+      // 外键名不能让他固定成使用外键对应的表字段，因为会存在A表有多个外键关联相同外表。
       // 外键所指向的外表字段名必然是 aiid/uuid/id。
+
       if (fieldName.endsWith('_aiid') || fieldName.endsWith('_uuid')) {
         // 去掉外键名的后缀（_aiid/_uuid）
         fieldNameNoSuffix = fieldName.substring(0, fieldName.length - 5);

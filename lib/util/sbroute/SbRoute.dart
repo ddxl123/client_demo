@@ -27,6 +27,9 @@ abstract class SbRoute extends OverlayRoute<SbPopResult> {
   /// 已经被设定多次触发时只会执行第一次。
   Future<bool> whenPop(SbPopResult? popResult);
 
+  /// [whenPop] 发生异常时的回调。
+  ///
+  /// [return] 返回 true，则表示 pop。
   bool whenException(Object exception, StackTrace stackTrace);
 
   ///初始化。
@@ -81,38 +84,50 @@ abstract class SbRoute extends OverlayRoute<SbPopResult> {
   /// 触发 pop。
   @override
   bool didPop(SbPopResult? result) {
-    try {
-      if (isPop == true) {
-        super.didPop(result);
-        return true;
-      } else {
-        // 这里 [toPop] 是异步的，先 return false，后完成 toPop 再次触发 didPop。
-        toPop(result);
-        return false;
-      }
-    } catch (e, st) {
-      return whenException(e, st);
+    if (isPop == true) {
+      super.didPop(result);
+      return true;
+    } else {
+      // 这里 [toPop] 是异步的，先 return false，后完成 toPop 再次触发 didPop。
+      toPop(result);
+      return false;
     }
   }
 
   /// pop 的结果处理。
   Future<void> toPop(SbPopResult? result) async {
-    if (isPopping) {
-      return;
-    }
-    isPopping = true;
-    isPopWaiting = true;
-    sbRouteSetState?.call(() {});
+    try {
+      if (isPopping) {
+        return;
+      }
+      isPopping = true;
+      isPopWaiting = true;
+      sbRouteSetState?.call(() {});
 
-    final bool popResult = await whenPop(result);
-    if (popResult) {
-      isPop = true;
-      didPop(result);
-    } else {
+      final bool popResult = await whenPop(result);
+      if (popResult) {
+        isPop = true;
+        didPop(result);
+      } else {
+        isPopping = false;
+        isPopWaiting = false;
+        sbRouteSetState?.call(() {});
+      }
+    } catch (e, st) {
       isPopping = false;
       isPopWaiting = false;
       sbRouteSetState?.call(() {});
     }
+  }
+
+  /// 对 [whenPop] 的快捷使用。
+  ///
+  /// 当触发点击背景或物理返回时，直接返回。
+  Future<bool> quickWhenPop(SbPopResult? popResult, Future<bool> callback(SbPopResult quickPopResult)) async {
+    if (popResult == null || popResult.popResultSelect == PopResultSelect.clickBackground) {
+      return true;
+    }
+    return await callback(popResult);
   }
 
   ///

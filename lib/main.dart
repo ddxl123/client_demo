@@ -1,6 +1,6 @@
 import 'package:demo/util/sbbutton/SbButton.dart';
-import 'package:demo/vc/view/appinitpage/AppInitPage.dart';
-import 'package:demo/vc/view/homepage/HomePage.dart';
+import 'package:demo/muc/view/appinitpage/AppInitPage.dart';
+import 'package:demo/muc/view/homepage/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

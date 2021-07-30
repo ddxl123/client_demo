@@ -3,20 +3,18 @@ import 'package:flutter/material.dart';
 import 'SbSheetRouteController.dart';
 import 'SbSheetRouteWidget.dart';
 
-/// [T]：[bodyData] 的元素类型
-///
-/// [M]：标记类型
-abstract class SbSheetRoute<T, M> extends OverlayRoute<Object?> {
+/// [D]：[bodyData] 的元素类型
+abstract class SbSheetRoute<D> extends OverlayRoute<Object?> {
   ///
 
-  final SbSheetPageController<T, M> sheetPageController = SbSheetPageController<T, M>();
+  final SbSheetPageController<D> sheetPageController = SbSheetPageController<D>();
 
   /// 内部滑动的数据数组。每次触发加载区都会触发该异步，并自动 setState。
   ///
   /// [bodyData]：可改变该数组元素（不能改变地址），比如增删改。
   ///
   /// [mark]：对数据源进行标记，以便加载更多时获取到的是 [mark] 为起点之后的数据。
-  Future<void> bodyDataFuture(List<T> bodyData, Mark<M> mark);
+  Future<void> bodyDataFuture(List<D> bodyData, Mark mark);
 
   /// [headerSliver]：返回值必须是一个 sliver
   Widget headerSliver();
@@ -44,7 +42,7 @@ abstract class SbSheetRoute<T, M> extends OverlayRoute<Object?> {
           return Stack(
             children: <Widget>[
               _backgroundHit(),
-              SbSheetRouteWidget<T, M>(this),
+              SbSheetRouteWidget<D>(this),
             ],
           );
         },

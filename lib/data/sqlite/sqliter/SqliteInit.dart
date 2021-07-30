@@ -4,6 +4,7 @@ import 'package:demo/appversion/AppVersionStatus.dart';
 import 'package:demo/data/model/MAppVersionInfo.dart';
 import 'package:demo/data/model/ParseIntoSqls.dart';
 import 'package:demo/data/sqlite/sqliter/SqliteTest.dart';
+import 'package:demo/util/SbHelper.dart';
 
 import 'OpenSqlite.dart';
 import 'SqliteDiag.dart';
@@ -93,8 +94,8 @@ class SqliteInit {
       id: null,
       aiid: null,
       uuid: null,
-      created_at: DateTime.now().millisecondsSinceEpoch,
-      updated_at: DateTime.now().millisecondsSinceEpoch,
+      created_at: SbHelper().newTimestamp,
+      updated_at: SbHelper().newTimestamp,
       saved_version: currentAppVersion,
     );
     await db.insert(appVersionInfo.tableName, appVersionInfo.getRowJson);

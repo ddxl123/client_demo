@@ -5,19 +5,19 @@ import 'LoadAreaWidget.dart';
 import 'SbSheetRoute.dart';
 import 'SbSheetRouteController.dart';
 
-class SbSheetRouteWidget<T, M> extends StatefulWidget {
+class SbSheetRouteWidget<T> extends StatefulWidget {
   const SbSheetRouteWidget(this.sbSheetPage);
 
-  final SbSheetRoute<T, M> sbSheetPage;
+  final SbSheetRoute<T> sbSheetPage;
 
   @override
-  _SbSheetRouteWidgetState<T, M> createState() => _SbSheetRouteWidgetState<T, M>();
+  _SbSheetRouteWidgetState<T> createState() => _SbSheetRouteWidgetState<T>();
 }
 
-class _SbSheetRouteWidgetState<T, M> extends State<SbSheetRouteWidget<T, M>> with SingleTickerProviderStateMixin {
+class _SbSheetRouteWidgetState<T> extends State<SbSheetRouteWidget<T>> with SingleTickerProviderStateMixin {
   ///
 
-  late final SbSheetPageController<T, M> sheetPageController;
+  late final SbSheetPageController<T> sheetPageController;
 
   @override
   void initState() {
@@ -149,7 +149,7 @@ class _SbSheetRouteWidgetState<T, M> extends State<SbSheetRouteWidget<T, M>> wit
         };
       },
       builder: (State state) {
-        return LoadAreaWidget<T, M>(sheetPageController.loadAreaController);
+        return LoadAreaWidget<T>(sheetPageController.loadAreaController);
       },
     );
   }
