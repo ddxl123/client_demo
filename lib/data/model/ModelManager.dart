@@ -4,15 +4,37 @@
           import 'MAppVersionInfo.dart';
             import 'MUpload.dart';
             import 'MUser.dart';
-            import 'MFComplete.dart';
-            import 'MFFragment.dart';
-            import 'MFMemory.dart';
-            import 'MFRule.dart';
             import 'MPnComplete.dart';
-            import 'MPnFragment.dart';
-            import 'MPnMemory.dart';
+            import 'MFComplete.dart';
             import 'MPnRule.dart';
+            import 'MFRule.dart';
+            import 'MPnFragment.dart';
+            import 'MFFragment.dart';
+            import 'MPnMemory.dart';
+            import 'MFMemory.dart';
       
+    
+    class TwoId {
+  TwoId({
+    required String uuidKey,
+    required String aiidKey,
+    required String? uuidValue,
+    required int? aiidValue,
+  }) {
+    if (aiidValue != null && uuidValue == null) {
+      whereByTwoId = '$aiidKey = ?';
+      whereArgsByTwoId = <Object>[aiidValue];
+    } else if (aiidValue == null && uuidValue != null) {
+      whereByTwoId = '$uuidKey = ?';
+      whereArgsByTwoId = <Object>[uuidValue];
+    } else {
+      throw 'query by aiid and uuid err';
+    }
+  }
+
+  late String whereByTwoId;
+  late List<Object> whereArgsByTwoId;
+}
     
     class ModelManager {
           static T createEmptyModelByTableName<T extends ModelBase>(String tableName) {
@@ -23,22 +45,22 @@
         return MUpload() as T;
             case 'user':
         return MUser() as T;
-            case 'f_complete':
-        return MFComplete() as T;
-            case 'f_fragment':
-        return MFFragment() as T;
-            case 'f_memory':
-        return MFMemory() as T;
-            case 'f_rule':
-        return MFRule() as T;
             case 'pn_complete':
         return MPnComplete() as T;
-            case 'pn_fragment':
-        return MPnFragment() as T;
-            case 'pn_memory':
-        return MPnMemory() as T;
+            case 'f_complete':
+        return MFComplete() as T;
             case 'pn_rule':
         return MPnRule() as T;
+            case 'f_rule':
+        return MFRule() as T;
+            case 'pn_fragment':
+        return MPnFragment() as T;
+            case 'f_fragment':
+        return MFFragment() as T;
+            case 'pn_memory':
+        return MPnMemory() as T;
+            case 'f_memory':
+        return MFMemory() as T;
       
         default:
           throw 'unknown tableName: ' + tableName;
@@ -58,14 +80,15 @@
         String? orderBy,
         int? limit,
         int? offset,
+        TwoId? byTwoId,
       }) async {
         if (connectTransaction != null) {
           return await connectTransaction.query(
             tableName,
             distinct: distinct,
             columns: columns,
-            where: where,
-            whereArgs: whereArgs,
+            where: where ?? byTwoId?.whereByTwoId,
+            whereArgs: whereArgs ?? byTwoId?.whereArgsByTwoId,
             groupBy: groupBy,
             having: having,
             orderBy: orderBy,
@@ -77,8 +100,8 @@
           tableName,
           distinct: distinct,
           columns: columns,
-          where: where,
-          whereArgs: whereArgs,
+          where: where ?? byTwoId?.whereByTwoId,
+          whereArgs: whereArgs ?? byTwoId?.whereArgsByTwoId,
           groupBy: groupBy,
           having: having,
           orderBy: orderBy,
@@ -101,6 +124,7 @@
     String? orderBy,
     int? limit,
     int? offset,
+    TwoId? byTwoId,
   }) async {
     final List<Map<String, Object?>> rows = await queryRowsAsJsons(
       connectTransaction: connectTransaction,
@@ -114,6 +138,7 @@
       orderBy: orderBy,
       limit: limit,
       offset: offset,
+      byTwoId: byTwoId,
     );
 
     final List<M> models = <M>[];
