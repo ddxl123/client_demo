@@ -1,13 +1,14 @@
-import 'package:demo/data/model/ModelBase.dart';
-import 'package:demo/muc/view/homepage/poolentry/PoolEntryBase.dart';
+import 'package:demo/muc/getcontroller/homepage/PoolGetController.dart';
+import 'package:demo/muc/view/homepage/poolentry/AbstractPoolEntry.dart';
 import 'package:demo/util/SbHelper.dart';
-import 'package:demo/util/sheetroute/SbSheetRoute.dart';
 import 'package:demo/util/sheetroute/SbSheetRouteController.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-abstract class NodeSheetRouteEntryBase<PNM extends ModelBase, D> extends SheetRoutePoolEntryBase<PNM, D> {
-  NodeSheetRouteEntryBase(PNM poolNodeModel) : super(poolNodeModel);
+import '../more/AbstractMoreRoute.dart';
+
+abstract class AbstractNodeSheetRoute<D> extends AbstractPoolEntrySheetRoute<D> {
+  AbstractNodeSheetRoute(PoolNodeModel poolNodeModel) : super(poolNodeModel);
 
   @override
   Widget bodySliver() {
@@ -28,7 +29,7 @@ abstract class NodeSheetRouteEntryBase<PNM extends ModelBase, D> extends SheetRo
       child: Container(
         child: Row(
           children: <Widget>[
-            Text(nodeVo.getTitle()),
+            Text(nodeTitle),
             Expanded(child: Container()),
             TextButton(
               child: const Icon(Icons.more_horiz),
@@ -78,8 +79,10 @@ abstract class NodeSheetRouteEntryBase<PNM extends ModelBase, D> extends SheetRo
     );
   }
 
+  String get nodeTitle;
+
   /// 点右上角更多的按钮要触发的 route
-  MoreRouteBase get moreRoute;
+  AbstractMoreRoute get moreRoute;
 
   Widget? bodyBuilder(BuildContext context, int index);
 }

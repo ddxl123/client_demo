@@ -2,8 +2,6 @@ import 'package:demo/global/Global.dart';
 import 'package:demo/muc/getcontroller/homepage/HomePageGetController.dart';
 import 'package:demo/muc/getcontroller/homepage/PoolGetController.dart';
 import 'package:demo/muc/view/homepage/poolentry/PoolEntry.dart';
-import 'package:demo/muc/view/homepage/poolrouteentry/PoolEntry.dart';
-import 'package:demo/muc/view/homepage/longpresspool/entrybase/LongPressPoolRouteEntryBase.dart';
 import 'package:demo/util/SbHelper.dart';
 import 'package:demo/util/sbbutton/SbButton.dart';
 import 'package:demo/util/sbfreebox/SbFreeBox.dart';
@@ -25,7 +23,7 @@ class HomePage extends StatelessWidget {
         freeMoveScaleLayerWidgets: _freeMoveScaleLayerWidgets(),
       ),
       onLongPressed: (PointerDownEvent event) {
-        SbHelper().getNavigator!.push(LongPressPoolRouteEntryBase());
+        SbHelper().getNavigator!.push(PoolEntry().toLongPressPool());
       },
     );
   }
@@ -76,22 +74,8 @@ class HomePage extends StatelessWidget {
       builder: (PoolGetController fragmentPoolGetController) {
         return SbFreeBoxStack(
           builder: (BuildContext context, void Function(void Function()) bSetState) {
-            return <SbFreeBoxPositioned>[
-              for (int i = 0; i < fragmentPoolGetController.currentPoolData.length; i++)
-                SbFreeBoxPositioned(
-                  easyPosition: fragmentPoolGetController.currentPoolData[i].getEasyPositionToOffset(),
-                  child: SbButton(
-                    child: Material(
-                      child: Text(fragmentPoolGetController.currentPoolData[i].getTitle()),
-                    ),
-                    onLongPressed: (_) {
-                      PoolEntry.forLongPressNodeRoute(fragmentPoolGetController.currentPoolData[i]);
-                    },
-                    onUp: (_) {
-                      PoolEntry.forNodeSheetRoute(fragmentPoolGetController.currentPoolData[i]);
-                    },
-                  ),
-                ),
+            return <Widget>[
+              for (int i = 0; i < fragmentPoolGetController.currentPoolData.length; i++) PoolEntry().toNode(fragmentPoolGetController.currentPoolData[i]),
             ];
           },
         );

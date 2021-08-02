@@ -65,7 +65,7 @@ class PoolUpdate extends UpdateBase<PoolGetController> {
       return poolNodeModels;
     }
 
-    return (await getxController.select<List<PoolNodeModel>>(
+    return (await getxController.selectFuture<List<PoolNodeModel>>(
           fragmentPoolType: poolType,
           fragmentPoolCallback: () async {
             return froms(await query(MPnFragment().tableName));
@@ -90,5 +90,8 @@ class PoolUpdate extends UpdateBase<PoolGetController> {
   }
 
   /// 删除当前池的指定节点。
-  Future<void> deleteNode(ModelBase model) async {}
+  Future<void> deleteNode(PoolNodeModel poolNodeModel) async {
+    getxController.currentPoolData.removeWhere((PoolNodeModel element) => element == poolNodeModel);
+    getxController.update();
+  }
 }

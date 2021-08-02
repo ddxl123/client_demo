@@ -1,3 +1,4 @@
+import 'package:demo/test/FlutterTest.dart';
 import 'package:demo/util/sbbutton/SbButton.dart';
 import 'package:demo/muc/view/appinitpage/AppInitPage.dart';
 import 'package:demo/muc/view/homepage/HomePage.dart';

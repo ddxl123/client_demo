@@ -38,28 +38,33 @@ extension PoolTypeExt on PoolType {
 }
 
 class PoolNodeModel {
-  PoolNodeModel();
-
   PoolNodeModel.from(ModelBase model) {
     switch (model.runtimeType) {
       case MPnFragment:
-        currentNodeModel = model;
+        _currentNodeModel = model;
         break;
       case MPnMemory:
-        currentNodeModel = model;
+        _currentNodeModel = model;
         break;
       case MPnComplete:
-        currentNodeModel = model;
+        _currentNodeModel = model;
         break;
       case MPnRule:
-        currentNodeModel = model;
+        _currentNodeModel = model;
         break;
       default:
         throw 'unknown model: $model';
     }
   }
 
-  late ModelBase currentNodeModel;
+  late ModelBase _currentNodeModel;
+
+  /// 获取池节点模型，同时转换类型为当前池节点类型。
+  ///
+  /// [PNM] 池节点模型。
+  PNM getCurrentNodeModel<PNM extends ModelBase>() {
+    return _currentNodeModel as PNM;
+  }
 }
 
 class PoolGetController extends GetControllerBase<PoolGetController, PoolUpdate> {
@@ -96,12 +101,33 @@ class PoolGetController extends GetControllerBase<PoolGetController, PoolUpdate>
     return FreeBoxCamera(easyPosition: Offset.zero, scale: 1);
   }
 
-  FutureOr<T?> select<T>({
+  T? select<T>({
     required PoolType fragmentPoolType,
-    required FutureOr<T?> fragmentPoolCallback(),
-    required FutureOr<T?> memoryPoolCallback(),
-    required FutureOr<T?> completePoolCallback(),
-    required FutureOr<T?> rulePoolCallback(),
+    required T? fragmentPoolCallback(),
+    required T? memoryPoolCallback(),
+    required T? completePoolCallback(),
+    required T? rulePoolCallback(),
+  }) {
+    switch (fragmentPoolType) {
+      case PoolType.fragment:
+        return fragmentPoolCallback();
+      case PoolType.memory:
+        return memoryPoolCallback();
+      case PoolType.complete:
+        return completePoolCallback();
+      case PoolType.rule:
+        return rulePoolCallback();
+      default:
+        throw 'unknown fragmentPoolType: $fragmentPoolType';
+    }
+  }
+
+  Future<T?> selectFuture<T>({
+    required PoolType fragmentPoolType,
+    required Future<T?> fragmentPoolCallback(),
+    required Future<T?> memoryPoolCallback(),
+    required Future<T?> completePoolCallback(),
+    required Future<T?> rulePoolCallback(),
   }) async {
     switch (fragmentPoolType) {
       case PoolType.fragment:

@@ -7,7 +7,7 @@ import 'Global.dart';
 class SbFreeBoxStack extends StatefulWidget {
   const SbFreeBoxStack({required this.builder});
 
-  final List<SbFreeBoxPositioned> Function(
+  final List<Widget> Function(
     BuildContext context,
     void Function(void Function()) bSetState,
   ) builder;

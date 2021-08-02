@@ -1,15 +1,18 @@
 import 'package:demo/data/model/ModelBase.dart';
 import 'package:demo/data/sqlite/sqliter/SqliteCurd.dart';
+import 'package:demo/muc/getcontroller/homepage/PoolGetController.dart';
+import 'package:demo/muc/view/homepage/poolentry/AbstractPoolEntry.dart';
 import 'package:demo/util/SbHelper.dart';
 import 'package:demo/util/sbbutton/Global.dart';
 import 'package:demo/util/sblogger/SbLogger.dart';
 import 'package:demo/util/sbroundedbox/SbRoundedBox.dart';
 import 'package:demo/util/sbroute/AutoPosition.dart';
 import 'package:demo/util/sbroute/SbPopResult.dart';
-import 'package:demo/util/sbroute/SbRoute.dart';
 import 'package:flutter/material.dart';
 
-abstract class MoreRouteBase extends SbRoute {
+abstract class AbstractMoreRoute extends AbstractPoolEntryRoute {
+  AbstractMoreRoute(PoolNodeModel poolNodeModel) : super(poolNodeModel);
+
   @override
   List<Widget> body() {
     return <Widget>[

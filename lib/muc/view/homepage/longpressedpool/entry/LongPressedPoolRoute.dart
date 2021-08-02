@@ -4,10 +4,11 @@ import 'package:demo/data/model/MPnMemory.dart';
 import 'package:demo/data/model/MPnRule.dart';
 import 'package:demo/data/sqlite/sqliter/SqliteCurd.dart';
 import 'package:demo/muc/getcontroller/homepage/PoolGetController.dart';
-import 'package:demo/muc/view/homepage/longpresspool/entrybase/LongPressPoolRouteEntryBase.dart';
 import 'package:demo/util/SbHelper.dart';
 
-class LongPressPoolForFragmentPoolRoute extends LongPressPoolRouteEntryBase {
+import 'AbstractLongPressedPoolRoute.dart';
+
+class LongPressedPoolRouteForFragment extends AbstractLongPressedPoolRoute {
   @override
   Future<PoolNodeModel> createNewNode(String easyPosition) async {
     final MPnFragment pnFragment = MPnFragment.createModel(
@@ -25,7 +26,7 @@ class LongPressPoolForFragmentPoolRoute extends LongPressPoolRouteEntryBase {
   }
 }
 
-class LongPressPoolForMemoryPoolRoute extends LongPressPoolRouteEntryBase {
+class LongPressedPoolRouteForMemory extends AbstractLongPressedPoolRoute {
   @override
   Future<PoolNodeModel> createNewNode(String easyPosition) async {
     final MPnMemory pnMemory = MPnMemory.createModel(
@@ -42,7 +43,7 @@ class LongPressPoolForMemoryPoolRoute extends LongPressPoolRouteEntryBase {
   }
 }
 
-class LongPressPoolForCompletePoolRoute extends LongPressPoolRouteEntryBase {
+class LongPressedPoolRouteForComplete extends AbstractLongPressedPoolRoute {
   @override
   Future<PoolNodeModel> createNewNode(String easyPosition) async {
     final MPnComplete pnComplete = MPnComplete.createModel(
@@ -59,7 +60,7 @@ class LongPressPoolForCompletePoolRoute extends LongPressPoolRouteEntryBase {
   }
 }
 
-class LongPressPoolForRulePoolRoute extends LongPressPoolRouteEntryBase {
+class LongPressedPoolRouteForRule extends AbstractLongPressedPoolRoute {
   @override
   Future<PoolNodeModel> createNewNode(String easyPosition) async {
     final MPnRule pnRule = MPnRule.createModel(

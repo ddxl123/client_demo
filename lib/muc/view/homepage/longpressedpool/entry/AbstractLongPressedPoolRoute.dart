@@ -9,7 +9,7 @@ import 'package:demo/util/sbroute/SbRoute.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-abstract class LongPressPoolRouteEntryBase extends SbRoute {
+abstract class AbstractLongPressedPoolRoute extends SbRoute {
   @override
   List<Widget> body() {
     final Offset position = touchPosition;
@@ -26,10 +26,6 @@ abstract class LongPressPoolRouteEntryBase extends SbRoute {
                 final PoolNodeModel poolNodeModel = await createNewNode(easyPosition);
                 Get.find<PoolGetController>().updateLogic.insertNewNode(poolNodeModel);
               },
-            ),
-            TextButton(
-              child: const Text('删除节点'),
-              onPressed: () {},
             ),
           ],
         ),
