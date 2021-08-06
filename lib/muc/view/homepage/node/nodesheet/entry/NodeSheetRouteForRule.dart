@@ -20,6 +20,11 @@ class NodeSheetRouteForRule extends AbstractNodeSheetRoute<MFRule> {
   Future<void> bodyDataFuture(List<MFRule> bodyData, Mark mark) async {
     const int limit = 10;
 
+    if (bodyData.isNotEmpty) {
+      mark.value = bodyData.last.get_id!;
+    } else {
+      mark.value = 0;
+    }
     final MFRule forKey = MFRule();
     final List<MFRule> models = await ModelManager.queryRowsAsModels(
       connectTransaction: null,
@@ -34,10 +39,6 @@ class NodeSheetRouteForRule extends AbstractNodeSheetRoute<MFRule> {
       ),
     );
     bodyData.addAll(models);
-
-    if (models.isNotEmpty) {
-      mark.value = models.last.get_id!;
-    }
   }
 
   @override
@@ -46,7 +47,7 @@ class NodeSheetRouteForRule extends AbstractNodeSheetRoute<MFRule> {
         child: SbButton(
           child: Text(sheetPageController.bodyData[index].get_title ?? ''),
           onLongPressed: (PointerDownEvent event) {
-            SbHelper().getNavigator!.push(LongPressedFragmentForRule(poolNodeModel, sheetPageController.bodyData[index]));
+            SbHelper().getNavigator!.push(LongPressedFragmentForRule(this, sheetPageController.bodyData[index]));
           },
         ),
       );
@@ -55,5 +56,5 @@ class NodeSheetRouteForRule extends AbstractNodeSheetRoute<MFRule> {
   String get nodeTitle => poolNodeModel.getCurrentNodeModel<MPnRule>().get_title ?? 'unknown';
 
   @override
-  AbstractMoreRoute get moreRoute => MoreRouteForRule(poolNodeModel);
+  AbstractMoreRoute<MFRule> get moreRoute => MoreRouteForRule(this);
 }

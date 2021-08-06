@@ -1,15 +1,10 @@
 // ignore_for_file: non_constant_identifier_names
-import 'package:demo/data/model/MFComplete.dart';
-import 'package:demo/data/model/MFFragment.dart';
-import 'package:demo/data/model/MFMemory.dart';
-import 'package:demo/data/model/MFRule.dart';
 import 'package:demo/data/model/MPnComplete.dart';
 import 'package:demo/data/model/MPnFragment.dart';
 import 'package:demo/data/model/MPnMemory.dart';
 import 'package:demo/data/model/MPnRule.dart';
 import 'package:demo/util/SbHelper.dart';
 import 'package:demo/util/sblogger/SbLogger.dart';
-import 'package:uuid/uuid.dart';
 
 class SqliteTest {
   Future<void> _for({required int count, required Future<void> Function() insert}) async {
@@ -29,7 +24,8 @@ class SqliteTest {
           uuid: SbHelper().newUuid,
           created_at: null,
           updated_at: null,
-          used_rule_aiid: null,
+          rule_aiid: null,
+          rule_uuid: null,
           easy_position: '${SbHelper().randomDouble(2000)},${SbHelper().randomDouble(2000)}',
           title: SbHelper().randomString(20),
         ).insertDb();
@@ -42,6 +38,8 @@ class SqliteTest {
           id: null,
           aiid: null,
           uuid: SbHelper().newUuid,
+          rule_aiid: null,
+          rule_uuid: null,
           created_at: null,
           updated_at: null,
           easy_position: '${SbHelper().randomDouble(2000)},${SbHelper().randomDouble(2000)}',
@@ -56,6 +54,8 @@ class SqliteTest {
           id: null,
           aiid: null,
           uuid: SbHelper().newUuid,
+          rule_aiid: null,
+          rule_uuid: null,
           created_at: null,
           updated_at: null,
           easy_position: '${SbHelper().randomDouble(2000)},${SbHelper().randomDouble(2000)}',

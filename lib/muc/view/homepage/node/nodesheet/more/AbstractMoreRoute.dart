@@ -1,6 +1,6 @@
 import 'package:demo/data/model/ModelBase.dart';
 import 'package:demo/data/sqlite/sqliter/SqliteCurd.dart';
-import 'package:demo/muc/getcontroller/homepage/PoolGetController.dart';
+import 'package:demo/muc/view/homepage/node/nodesheet/entry/AbstractNodeSheetRoute.dart';
 import 'package:demo/muc/view/homepage/poolentry/AbstractPoolEntry.dart';
 import 'package:demo/util/SbHelper.dart';
 import 'package:demo/util/sbbutton/Global.dart';
@@ -10,8 +10,10 @@ import 'package:demo/util/sbroute/AutoPosition.dart';
 import 'package:demo/util/sbroute/SbPopResult.dart';
 import 'package:flutter/material.dart';
 
-abstract class AbstractMoreRoute extends AbstractPoolEntryRoute {
-  AbstractMoreRoute(PoolNodeModel poolNodeModel) : super(poolNodeModel);
+abstract class AbstractMoreRoute<FDM extends ModelBase> extends AbstractPoolEntryRoute {
+  AbstractMoreRoute(this.fatherRoute) : super(fatherRoute.poolNodeModel);
+
+  late final AbstractNodeSheetRoute<FDM> fatherRoute;
 
   @override
   List<Widget> body() {
@@ -44,7 +46,8 @@ abstract class AbstractMoreRoute extends AbstractPoolEntryRoute {
       popResult,
       (SbPopResult quickPopResult) async {
         if (quickPopResult.popResultSelect == PopResultSelect.one) {
-          await SqliteCurd<ModelBase>().insertRow(model: newModel, transactionMark: null);
+          final FDM newModel = await SqliteCurd<FDM>().insertRow(model: insertModel, transactionMark: null);
+          fatherRoute.sheetPageController.bodyData.add(newModel);
           return true;
         }
         return false;
@@ -53,5 +56,5 @@ abstract class AbstractMoreRoute extends AbstractPoolEntryRoute {
   }
 
   /// 创建新碎片需要的模型。
-  ModelBase get newModel;
+  FDM get insertModel;
 }

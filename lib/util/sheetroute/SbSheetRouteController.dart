@@ -16,6 +16,7 @@ class Mark {
   int value = 0;
 }
 
+/// [T] 是 [SbSheetPageController.bodyData] 的数据类型。
 class SbSheetPageController<T> extends ChangeNotifier {
   ///
 

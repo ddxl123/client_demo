@@ -1,20 +1,23 @@
-import 'package:demo/data/model/ModelBase.dart';
-import 'package:demo/muc/getcontroller/homepage/PoolGetController.dart';
+import 'package:demo/data/model/MFComplete.dart';
+import 'package:demo/data/model/MFFragment.dart';
+import 'package:demo/data/model/MFMemory.dart';
+import 'package:demo/data/model/MFRule.dart';
+import 'package:demo/muc/view/homepage/node/nodesheet/entry/AbstractNodeSheetRoute.dart';
 
 import 'AbstractLongPressedFragment.dart';
 
-class LongPressedFragmentForFragment extends AbstractLongPressedFragment {
-  LongPressedFragmentForFragment(PoolNodeModel poolNodeModel, ModelBase currentFragmentModel) : super(poolNodeModel, currentFragmentModel);
+class LongPressedFragmentForFragment extends AbstractLongPressedFragment<MFFragment> {
+  LongPressedFragmentForFragment(AbstractNodeSheetRoute<MFFragment> fatherRoute, MFFragment currentFragmentModel) : super(fatherRoute, currentFragmentModel);
 }
 
-class LongPressedFragmentForMemory extends AbstractLongPressedFragment {
-  LongPressedFragmentForMemory(PoolNodeModel poolNodeModel, ModelBase currentFragmentModel) : super(poolNodeModel, currentFragmentModel);
+class LongPressedFragmentForMemory extends AbstractLongPressedFragment<MFMemory> {
+  LongPressedFragmentForMemory(AbstractNodeSheetRoute<MFMemory> fatherRoute, MFMemory currentFragmentModel) : super(fatherRoute, currentFragmentModel);
 }
 
-class LongPressedFragmentForComplete extends AbstractLongPressedFragment {
-  LongPressedFragmentForComplete(PoolNodeModel poolNodeModel, ModelBase currentFragmentModel) : super(poolNodeModel, currentFragmentModel);
+class LongPressedFragmentForComplete extends AbstractLongPressedFragment<MFComplete> {
+  LongPressedFragmentForComplete(AbstractNodeSheetRoute<MFComplete> fatherRoute, MFComplete currentFragmentModel) : super(fatherRoute, currentFragmentModel);
 }
 
-class LongPressedFragmentForRule extends AbstractLongPressedFragment {
-  LongPressedFragmentForRule(PoolNodeModel poolNodeModel, ModelBase currentFragmentModel) : super(poolNodeModel, currentFragmentModel);
+class LongPressedFragmentForRule extends AbstractLongPressedFragment<MFRule> {
+  LongPressedFragmentForRule(AbstractNodeSheetRoute<MFRule> fatherRoute, MFRule currentFragmentModel) : super(fatherRoute, currentFragmentModel);
 }

@@ -1,6 +1,6 @@
-import '../builder/Type.dart';
-import '../builder/creator/FieldCreator.dart';
-import '../builder/creator/ModelCreator.dart';
+import '../../builder/Type.dart';
+import '../../builder/creator/FieldCreator.dart';
+import '../../builder/creator/ModelCreator.dart';
 
 class CAppVersionInfo extends ModelCreator {
 

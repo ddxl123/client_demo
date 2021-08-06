@@ -2,6 +2,7 @@ import 'package:demo/data/model/ModelBase.dart';
 import 'package:demo/data/sqlite/sqliter/SqliteCurd.dart';
 import 'package:demo/muc/getcontroller/homepage/PoolGetController.dart';
 import 'package:demo/muc/view/homepage/poolentry/AbstractPoolEntry.dart';
+import 'package:demo/util/SbHelper.dart';
 import 'package:demo/util/sbbutton/Global.dart';
 import 'package:demo/util/sblogger/SbLogger.dart';
 import 'package:demo/util/sbroundedbox/SbRoundedBox.dart';
@@ -23,12 +24,7 @@ abstract class LongPressedNodeRouteBase extends AbstractPoolEntryRoute {
             TextButton(
               child: const Text('删除节点'),
               onPressed: () async {
-                await SqliteCurd<ModelBase>().deleteRow(
-                  modelTableName: poolNodeModel.getCurrentNodeModel().tableName,
-                  modelId: poolNodeModel.getCurrentNodeModel().get_id,
-                  transactionMark: null,
-                );
-                Get.find<PoolGetController>().updateLogic.deleteNode(poolNodeModel);
+                SbHelper().getNavigator!.pop(SbPopResult(popResultSelect: PopResultSelect.one, value: null));
               },
             ),
           ],
@@ -45,7 +41,18 @@ abstract class LongPressedNodeRouteBase extends AbstractPoolEntryRoute {
 
   @override
   Future<bool> whenPop(SbPopResult? popResult) async {
-    return await quickWhenPop(popResult, (SbPopResult quickPopResult) async => false);
+    return await quickWhenPop(popResult, (SbPopResult quickPopResult) async {
+      if (quickPopResult.popResultSelect == PopResultSelect.one) {
+        await SqliteCurd<ModelBase>().deleteRow(
+          modelTableName: poolNodeModel.getCurrentNodeModel().tableName,
+          modelId: poolNodeModel.getCurrentNodeModel().get_id,
+          transactionMark: null,
+        );
+        Get.find<PoolGetController>().updateLogic.deleteNode(poolNodeModel);
+        return true;
+      }
+      return false;
+    });
   }
 }
 

@@ -17,7 +17,11 @@ class _SbRouteWidgetState extends State<SbRouteWidget> {
   void initState() {
     super.initState();
     widget.sbPopupRoute.onInit();
-    widget.sbPopupRoute.sbRouteSetState ??= setState;
+    widget.sbPopupRoute.sbRouteSetState = () {
+      if (mounted) {
+        setState(() {});
+      }
+    };
     WidgetsBinding.instance!.addPostFrameCallback((Duration timeStamp) {
       widget.sbPopupRoute.onRead();
     });
@@ -50,8 +54,7 @@ class _SbRouteWidgetState extends State<SbRouteWidget> {
       child: Listener(
         onPointerUp: (_) {
           widget.sbPopupRoute.toPop(
-            SbPopResult(
-                value: null, popResultSelect: PopResultSelect.clickBackground),
+            SbPopResult(value: null, popResultSelect: PopResultSelect.clickBackground),
           );
         },
         child: Opacity(

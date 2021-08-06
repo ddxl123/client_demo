@@ -2,6 +2,7 @@ import 'package:demo/data/model/MFMemory.dart';
 import 'package:demo/data/model/MPnMemory.dart';
 import 'package:demo/data/model/ModelManager.dart';
 import 'package:demo/muc/getcontroller/homepage/PoolGetController.dart';
+import 'package:demo/muc/view/homepage/node/nodesheet/fragment/FragmentPage.dart';
 import 'package:demo/muc/view/homepage/node/nodesheet/longpressedfragment/LongPressedFragment.dart';
 import 'package:demo/muc/view/homepage/node/nodesheet/more/AbstractMoreRoute.dart';
 import 'package:demo/muc/view/homepage/node/nodesheet/more/MoreRoute.dart';
@@ -19,6 +20,11 @@ class NodeSheetRouteForMemory extends AbstractNodeSheetRoute<MFMemory> {
   Future<void> bodyDataFuture(List<MFMemory> bodyData, Mark mark) async {
     const int limit = 10;
 
+    if (bodyData.isNotEmpty) {
+      mark.value = bodyData.last.get_id!;
+    } else {
+      mark.value = 0;
+    }
     final MFMemory forKey = MFMemory();
     final List<MFMemory> models = await ModelManager.queryRowsAsModels(
       connectTransaction: null,
@@ -33,10 +39,6 @@ class NodeSheetRouteForMemory extends AbstractNodeSheetRoute<MFMemory> {
       ),
     );
     bodyData.addAll(models);
-
-    if (models.isNotEmpty) {
-      mark.value = models.last.get_id!;
-    }
   }
 
   @override
@@ -44,8 +46,12 @@ class NodeSheetRouteForMemory extends AbstractNodeSheetRoute<MFMemory> {
         color: Colors.white,
         child: SbButton(
           child: Text(sheetPageController.bodyData[index].get_title ?? ''),
+          onUp: (PointerEvent event) async {
+            final MFMemory model = sheetPageController.bodyData[index];
+            SbHelper().getNavigator!.push(MaterialPageRoute<void>(builder: (_) => FragmentPage(model.get_fragment_aiid, model.get_fragment_uuid)));
+          },
           onLongPressed: (PointerDownEvent event) {
-            SbHelper().getNavigator!.push(LongPressedFragmentForMemory(poolNodeModel, sheetPageController.bodyData[index]));
+            SbHelper().getNavigator!.push(LongPressedFragmentForMemory(this, sheetPageController.bodyData[index]));
           },
         ),
       );
@@ -54,5 +60,5 @@ class NodeSheetRouteForMemory extends AbstractNodeSheetRoute<MFMemory> {
   String get nodeTitle => poolNodeModel.getCurrentNodeModel<MPnMemory>().get_title ?? 'unknown';
 
   @override
-  AbstractMoreRoute get moreRoute => MoreRouteForMemory(poolNodeModel);
+  AbstractMoreRoute<MFMemory> get moreRoute => MoreRouteForMemory(this);
 }

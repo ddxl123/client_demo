@@ -59,7 +59,7 @@ abstract class SbRoute extends OverlayRoute<SbPopResult> {
   //
 
   /// 当前 route 顶层 Widget 的 setState
-  void Function(void Function())? sbRouteSetState;
+  late Function sbRouteSetState;
 
   /// 是否显示 popWaiting
   bool isPopWaiting = false;
@@ -102,7 +102,7 @@ abstract class SbRoute extends OverlayRoute<SbPopResult> {
       }
       isPopping = true;
       isPopWaiting = true;
-      sbRouteSetState?.call(() {});
+      sbRouteSetState();
 
       final bool popResult = await whenPop(result);
       if (popResult) {
@@ -111,12 +111,12 @@ abstract class SbRoute extends OverlayRoute<SbPopResult> {
       } else {
         isPopping = false;
         isPopWaiting = false;
-        sbRouteSetState?.call(() {});
+        sbRouteSetState();
       }
     } catch (e, st) {
       isPopping = false;
       isPopWaiting = false;
-      sbRouteSetState?.call(() {});
+      sbRouteSetState();
     }
   }
 

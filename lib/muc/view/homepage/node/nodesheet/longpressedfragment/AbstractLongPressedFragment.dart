@@ -1,6 +1,6 @@
 import 'package:demo/data/model/ModelBase.dart';
 import 'package:demo/data/sqlite/sqliter/SqliteCurd.dart';
-import 'package:demo/muc/getcontroller/homepage/PoolGetController.dart';
+import 'package:demo/muc/view/homepage/node/nodesheet/entry/AbstractNodeSheetRoute.dart';
 import 'package:demo/muc/view/homepage/poolentry/AbstractPoolEntry.dart';
 import 'package:demo/util/SbHelper.dart';
 import 'package:demo/util/sbbutton/Global.dart';
@@ -10,10 +10,12 @@ import 'package:demo/util/sbroute/AutoPosition.dart';
 import 'package:demo/util/sbroute/SbPopResult.dart';
 import 'package:flutter/material.dart';
 
-abstract class AbstractLongPressedFragment extends AbstractPoolEntryRoute {
-  AbstractLongPressedFragment(PoolNodeModel poolNodeModel, this.currentFragmentModel) : super(poolNodeModel);
+abstract class AbstractLongPressedFragment<FDM extends ModelBase> extends AbstractPoolEntryRoute {
+  AbstractLongPressedFragment(this.fatherRoute, this.currentFragmentModel) : super(fatherRoute.poolNodeModel);
 
-  final ModelBase currentFragmentModel;
+  final AbstractNodeSheetRoute<FDM> fatherRoute;
+
+  final FDM currentFragmentModel;
 
   @override
   List<Widget> body() {
@@ -44,11 +46,12 @@ abstract class AbstractLongPressedFragment extends AbstractPoolEntryRoute {
       popResult,
       (SbPopResult quickPopResult) async {
         if (quickPopResult.popResultSelect == PopResultSelect.one) {
-          await SqliteCurd<ModelBase>().deleteRow(
+          await SqliteCurd<FDM>().deleteRow(
             modelTableName: currentFragmentModel.tableName,
             modelId: currentFragmentModel.get_id,
             transactionMark: null,
           );
+          fatherRoute.sheetPageController.bodyData.remove(currentFragmentModel);
           return true;
         }
         return false;

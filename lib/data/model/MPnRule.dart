@@ -10,8 +10,8 @@ class MPnRule implements ModelBase{
                 required String? uuid,
                 required int? created_at,
                 required int? updated_at,
-                required String? easy_position,
                 required String? title,
+                required String? easy_position,
         
   }) {
     _rowJson.addAll(
@@ -21,8 +21,8 @@ class MPnRule implements ModelBase{
               'uuid': uuid,
               'created_at': created_at,
               'updated_at': updated_at,
-              'easy_position': easy_position,
               'title': title,
+              'easy_position': easy_position,
       
       },
     );
@@ -35,8 +35,8 @@ class MPnRule implements ModelBase{
             String get uuid => 'uuid';
             String get created_at => 'created_at';
             String get updated_at => 'updated_at';
-            String get easy_position => 'easy_position';
             String get title => 'title';
+            String get easy_position => 'easy_position';
       
   final Map<String, Object?> _rowJson = <String, Object?>{};
   
@@ -48,8 +48,8 @@ class MPnRule implements ModelBase{
             String? get get_uuid => _rowJson['uuid'] as String?;
             int? get get_created_at => _rowJson['created_at'] as int?;
             int? get get_updated_at => _rowJson['updated_at'] as int?;
-            String? get get_easy_position => _rowJson['easy_position'] as String?;
             String? get get_title => _rowJson['title'] as String?;
+            String? get get_easy_position => _rowJson['easy_position'] as String?;
       
     Set<String> getDeleteManyForTwo() => <String>{
               'f_rule.node',

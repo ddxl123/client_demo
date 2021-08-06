@@ -2,19 +2,15 @@
     import 'package:demo/data/sqlite/sqliter/OpenSqlite.dart';
     import 'ModelBase.dart';
     
-class MFRule implements ModelBase{
-  MFRule();
-  MFRule.createModel({
+class MToken implements ModelBase{
+  MToken();
+  MToken.createModel({
           required int? id,
                 required int? aiid,
                 required String? uuid,
                 required int? created_at,
                 required int? updated_at,
-                required int? father_rule_aiid,
-                required String? father_rule_uuid,
-                required int? node_aiid,
-                required String? node_uuid,
-                required String? title,
+                required String? token,
         
   }) {
     _rowJson.addAll(
@@ -24,28 +20,20 @@ class MFRule implements ModelBase{
               'uuid': uuid,
               'created_at': created_at,
               'updated_at': updated_at,
-              'father_rule_aiid': father_rule_aiid,
-              'father_rule_uuid': father_rule_uuid,
-              'node_aiid': node_aiid,
-              'node_uuid': node_uuid,
-              'title': title,
+              'token': token,
       
       },
     );
   }
   
-    String get tableName => 'f_rule';
+    String get tableName => 'token';
     
       String get id => 'id';
             String get aiid => 'aiid';
             String get uuid => 'uuid';
             String get created_at => 'created_at';
             String get updated_at => 'updated_at';
-            String get father_rule_aiid => 'father_rule_aiid';
-            String get father_rule_uuid => 'father_rule_uuid';
-            String get node_aiid => 'node_aiid';
-            String get node_uuid => 'node_uuid';
-            String get title => 'title';
+            String get token => 'token';
       
   final Map<String, Object?> _rowJson = <String, Object?>{};
   
@@ -57,11 +45,7 @@ class MFRule implements ModelBase{
             String? get get_uuid => _rowJson['uuid'] as String?;
             int? get get_created_at => _rowJson['created_at'] as int?;
             int? get get_updated_at => _rowJson['updated_at'] as int?;
-            int? get get_father_rule_aiid => _rowJson['father_rule_aiid'] as int?;
-            String? get get_father_rule_uuid => _rowJson['father_rule_uuid'] as String?;
-            int? get get_node_aiid => _rowJson['node_aiid'] as int?;
-            String? get get_node_uuid => _rowJson['node_uuid'] as String?;
-            String? get get_title => _rowJson['title'] as String?;
+            String? get get_token => _rowJson['token'] as String?;
       
     Set<String> getDeleteManyForTwo() => <String>{
       

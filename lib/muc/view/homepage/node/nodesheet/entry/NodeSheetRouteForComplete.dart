@@ -3,6 +3,7 @@ import 'package:demo/data/model/MPnComplete.dart';
 import 'package:demo/data/model/ModelManager.dart';
 import 'package:demo/muc/getcontroller/homepage/PoolGetController.dart';
 import 'package:demo/muc/view/homepage/node/nodesheet/entry/AbstractNodeSheetRoute.dart';
+import 'package:demo/muc/view/homepage/node/nodesheet/fragment/FragmentPage.dart';
 import 'package:demo/muc/view/homepage/node/nodesheet/longpressedfragment/LongPressedFragment.dart';
 import 'package:demo/muc/view/homepage/node/nodesheet/more/AbstractMoreRoute.dart';
 import 'package:demo/muc/view/homepage/node/nodesheet/more/MoreRoute.dart';
@@ -10,6 +11,7 @@ import 'package:demo/util/SbHelper.dart';
 import 'package:demo/util/sbbutton/SbButton.dart';
 import 'package:demo/util/sheetroute/SbSheetRouteController.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class NodeSheetRouteForComplete extends AbstractNodeSheetRoute<MFComplete> {
   NodeSheetRouteForComplete(PoolNodeModel poolNodeModel) : super(poolNodeModel);
@@ -17,6 +19,12 @@ class NodeSheetRouteForComplete extends AbstractNodeSheetRoute<MFComplete> {
   @override
   Future<void> bodyDataFuture(List<MFComplete> bodyData, Mark mark) async {
     const int limit = 10;
+
+    if (bodyData.isNotEmpty) {
+      mark.value = bodyData.last.get_id!;
+    } else {
+      mark.value = 0;
+    }
 
     final MFComplete forKey = MFComplete();
     final List<MFComplete> models = await ModelManager.queryRowsAsModels(
@@ -32,10 +40,6 @@ class NodeSheetRouteForComplete extends AbstractNodeSheetRoute<MFComplete> {
       ),
     );
     bodyData.addAll(models);
-
-    if (models.isNotEmpty) {
-      mark.value = models.last.get_id!;
-    }
   }
 
   @override
@@ -43,9 +47,12 @@ class NodeSheetRouteForComplete extends AbstractNodeSheetRoute<MFComplete> {
         color: Colors.white,
         child: SbButton(
           child: Text(sheetPageController.bodyData[index].get_title ?? ''),
-          onUp: (PointerUpEvent event) {},
+          onUp: (PointerUpEvent event) {
+            final MFComplete model = sheetPageController.bodyData[index];
+            SbHelper().getNavigator!.push(MaterialPageRoute<void>(builder: (_) => FragmentPage(model.get_fragment_aiid, model.get_fragment_uuid)));
+          },
           onLongPressed: (PointerDownEvent event) {
-            SbHelper().getNavigator!.push(LongPressedFragmentForComplete(poolNodeModel, sheetPageController.bodyData[index]));
+            SbHelper().getNavigator!.push(LongPressedFragmentForComplete(this, sheetPageController.bodyData[index]));
           },
         ),
       );
@@ -54,5 +61,5 @@ class NodeSheetRouteForComplete extends AbstractNodeSheetRoute<MFComplete> {
   String get nodeTitle => poolNodeModel.getCurrentNodeModel<MPnComplete>().get_title ?? 'unknown';
 
   @override
-  AbstractMoreRoute get moreRoute => MoreRouteForComplete(poolNodeModel);
+  AbstractMoreRoute<MFComplete> get moreRoute => MoreRouteForComplete(this);
 }

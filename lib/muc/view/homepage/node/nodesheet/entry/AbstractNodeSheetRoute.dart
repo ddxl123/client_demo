@@ -1,3 +1,4 @@
+import 'package:demo/data/model/ModelBase.dart';
 import 'package:demo/muc/getcontroller/homepage/PoolGetController.dart';
 import 'package:demo/muc/view/homepage/poolentry/AbstractPoolEntry.dart';
 import 'package:demo/util/SbHelper.dart';
@@ -7,7 +8,8 @@ import 'package:flutter/material.dart';
 
 import '../more/AbstractMoreRoute.dart';
 
-abstract class AbstractNodeSheetRoute<D> extends AbstractPoolEntrySheetRoute<D> {
+/// [FDM] 碎片数据模型。
+abstract class AbstractNodeSheetRoute<FDM extends ModelBase> extends AbstractPoolEntrySheetRoute<FDM> {
   AbstractNodeSheetRoute(PoolNodeModel poolNodeModel) : super(poolNodeModel);
 
   @override
@@ -21,7 +23,7 @@ abstract class AbstractNodeSheetRoute<D> extends AbstractPoolEntrySheetRoute<D> 
   }
 
   @override
-  Future<void> bodyDataFuture(List<D> bodyData, Mark mark);
+  Future<void> bodyDataFuture(List<FDM> bodyData, Mark mark);
 
   @override
   Widget headerSliver() {
@@ -82,7 +84,7 @@ abstract class AbstractNodeSheetRoute<D> extends AbstractPoolEntrySheetRoute<D> 
   String get nodeTitle;
 
   /// 点右上角更多的按钮要触发的 route
-  AbstractMoreRoute get moreRoute;
+  AbstractMoreRoute<FDM> get moreRoute;
 
   Widget? bodyBuilder(BuildContext context, int index);
 }
