@@ -7,7 +7,9 @@ enum HttpResultType {
 }
 
 class HttpResult<T extends ResponseVOBase> {
-  HttpResult.of(this.httpResultType, this.exception, this.stackTrace);
+  HttpResult.failure(this.exception, this.stackTrace) {
+    httpResultType = HttpResultType.failure;
+  }
 
   HttpResult.from(Response<Map<String, dynamic>> response, this.dataVO) {
     try {
@@ -16,6 +18,9 @@ class HttpResult<T extends ResponseVOBase> {
         httpResultType = HttpResultType.failure;
         return;
       }
+
+      headers = response.headers;
+
       if (response.data!['code'] == null) {
         exception = Exception('code is null');
         httpResultType = HttpResultType.failure;
@@ -28,7 +33,7 @@ class HttpResult<T extends ResponseVOBase> {
         httpResultType = HttpResultType.success;
         return;
       }
-      
+
       dataVO.from(response.data!['data'] as Map<String, dynamic>);
       httpResultType = HttpResultType.success;
     } catch (e, st) {
@@ -39,7 +44,7 @@ class HttpResult<T extends ResponseVOBase> {
   }
 
   /// 当 [HttpResultType.failure] 时，
-  late final HttpResultType httpResultType;
+  late HttpResultType httpResultType;
 
   /// 只有 [HttpResultType.success] 才能调用 [code]。
   late final int code;
@@ -49,8 +54,10 @@ class HttpResult<T extends ResponseVOBase> {
 
   /// 当 [code] 代表为云端异常时，响应的数据为 null。但该 [dataVO] 成员并不为空，因为被赋值为对象，而其对象内部的成员并未进行初始化过（若引用内部成员会报错）。
   ///
-  /// 当使用 [HttpResult.of] 进行构造对象时，[dataVO]、[code] 和 [message] 均未被初始化。
+  /// 当使用 [HttpResult.failure] 进行构造对象时，[dataVO]、[code] 和 [message] 均未被初始化。
   late final T dataVO;
+
+  late final Headers headers;
 
   late final Object? exception;
   late final StackTrace? stackTrace;

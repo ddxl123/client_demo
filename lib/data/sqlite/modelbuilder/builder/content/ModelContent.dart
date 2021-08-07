@@ -15,6 +15,7 @@ class ModelContent {
   String content() {
     return '''
 // ignore_for_file: non_constant_identifier_names
+// ignore_for_file: annotate_overrides
 ${importContent()}
 class M${toCamelCase(tableName)} implements ModelBase{
 ${createModelContent()}

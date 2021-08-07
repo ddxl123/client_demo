@@ -1,4 +1,5 @@
 // ignore_for_file: non_constant_identifier_names
+// ignore_for_file: annotate_overrides
     import 'package:demo/data/sqlite/sqliter/OpenSqlite.dart';
     import 'ModelBase.dart';
     

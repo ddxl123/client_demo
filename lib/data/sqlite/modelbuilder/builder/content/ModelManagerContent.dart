@@ -9,6 +9,7 @@ class ModelManagerContent {
   // ============================================================================
   String content() {
     return '''
+    // ignore_for_file: directives_ordering
     ${importContent()}
     ${twoId()}
     class ModelManager {

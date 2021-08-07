@@ -2,6 +2,7 @@ import 'package:demo/global/Global.dart';
 import 'package:demo/muc/getcontroller/homepage/HomePageGetController.dart';
 import 'package:demo/muc/getcontroller/homepage/PoolGetController.dart';
 import 'package:demo/muc/view/homepage/poolentry/PoolEntry.dart';
+import 'package:demo/muc/view/loginpage/LoginPage.dart';
 import 'package:demo/util/SbHelper.dart';
 import 'package:demo/util/sbbutton/SbButton.dart';
 import 'package:demo/util/sbfreebox/SbFreeBox.dart';
@@ -62,7 +63,14 @@ class HomePage extends StatelessWidget {
                 },
               ),
             ),
-            Expanded(child: TextButton(onPressed: () {}, child: const Text('我'))),
+            Expanded(
+              child: TextButton(
+                child: const Text('我'),
+                onPressed: () {
+                  SbHelper().getNavigator!.push(LoginPage());
+                },
+              ),
+            ),
           ],
         ),
       ),

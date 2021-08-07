@@ -1,3 +1,4 @@
+    // ignore_for_file: directives_ordering
         import 'package:sqflite/sqflite.dart';
     import 'package:demo/data/sqlite/sqliter/OpenSqlite.dart';
     import 'ModelBase.dart';
