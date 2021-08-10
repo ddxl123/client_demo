@@ -35,8 +35,15 @@ abstract class AbstractMoreRoute<FDM extends ModelBase> extends AbstractPoolEntr
   }
 
   @override
-  bool whenException(Object exception, StackTrace stackTrace) {
-    sbLogger(message: 'err: ', exception: exception, stackTrace: stackTrace);
+  bool whenException(Object? exception, StackTrace? stackTrace) {
+    SbLogger(
+      code: null,
+      viewMessage: null,
+      data: null,
+      description: null,
+      exception: exception,
+      stackTrace: stackTrace,
+    );
     return true;
   }
 

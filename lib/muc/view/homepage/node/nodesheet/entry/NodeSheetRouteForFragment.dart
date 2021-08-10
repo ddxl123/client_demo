@@ -44,6 +44,18 @@ class NodeSheetRouteForFragment extends AbstractNodeSheetRoute<MFFragment> {
   }
 
   @override
+  void bodyDataException(Object? exception, StackTrace? stackTrace) {
+    SbLogger(
+      code: null,
+      viewMessage: null,
+      data: null,
+      description: null,
+      exception: exception,
+      stackTrace: stackTrace,
+    );
+  }
+
+  @override
   Widget? bodyBuilder(BuildContext context, int index) => Container(
         color: Colors.white,
         child: SbButton(

@@ -1,7 +1,7 @@
 import 'package:demo/data/sqlite/sqliter/SqliteInit.dart';
 import 'package:demo/floatingball/FloatingballInit.dart';
-import 'package:demo/util/sblogger/SbLogger.dart';
 import 'package:demo/muc/view/homepage/HomePage.dart';
+import 'package:demo/util/sblogger/SbLogger.dart';
 import 'package:flutter/material.dart';
 
 enum AppInitStatus { ok, exception, initializing }
@@ -38,7 +38,14 @@ class _AppInitPageState extends State<AppInitPage> {
       future: _future,
       builder: (BuildContext context, AsyncSnapshot<AppInitStatus> snapshot) {
         if (snapshot.hasError) {
-          sbLogger(message: 'initAll err: ', exception: snapshot.error, stackTrace: snapshot.stackTrace);
+          SbLogger(
+            code: null,
+            viewMessage: null,
+            data: null,
+            description: 'initAll err',
+            exception: snapshot.error,
+            stackTrace: snapshot.stackTrace,
+          );
           return const Scaffold(
             body: Center(
               child: Text('应用初始化失败！'),

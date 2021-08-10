@@ -63,8 +63,8 @@ class _SbSheetRouteWidgetState<T> extends State<SbSheetRouteWidget<T>> with Sing
         sheetPageController.animationController.animateTo(sheetPageController.initHeightRatio);
 
         // 添加监听。
-        sheetPageController.animationControllerAddListener(widget.sbSheetPage.bodyDataFuture);
-        sheetPageController.scrollControllerAddListener(widget.sbSheetPage.bodyDataFuture);
+        sheetPageController.animationControllerAddListener();
+        sheetPageController.scrollControllerAddListener();
       },
     );
   }
@@ -109,12 +109,8 @@ class _SbSheetRouteWidgetState<T> extends State<SbSheetRouteWidget<T>> with Sing
   /// [headerSliver] 位置的 widget
   Widget headerStateful() {
     return StatefulInitBuilder(
-      init: (State state) {
-        sheetPageController.headerSetState = () {
-          if (state.mounted) {
-            state.setState(() {});
-          }
-        };
+      init: (StatefulInitBuilderState state) {
+        sheetPageController.headerSetState = state.refresh;
       },
       builder: (State state) {
         return widget.sbSheetPage.headerSliver();
@@ -125,12 +121,8 @@ class _SbSheetRouteWidgetState<T> extends State<SbSheetRouteWidget<T>> with Sing
   /// [bodySliver] 位置的 widget
   Widget bodyStateful() {
     return StatefulInitBuilder(
-      init: (State state) {
-        sheetPageController.bodySetState = () {
-          if (state.mounted) {
-            state.setState(() {});
-          }
-        };
+      init: (StatefulInitBuilderState state) {
+        sheetPageController.headerSetState = state.refresh;
       },
       builder: (State state) {
         return widget.sbSheetPage.bodySliver();
@@ -141,12 +133,8 @@ class _SbSheetRouteWidgetState<T> extends State<SbSheetRouteWidget<T>> with Sing
   /// [loadArea] 位置的 widget
   Widget loadArea() {
     return StatefulInitBuilder(
-      init: (State state) {
-        sheetPageController.loadAreaSetState = () {
-          if (state.mounted) {
-            state.setState(() {});
-          }
-        };
+      init: (StatefulInitBuilderState state) {
+        sheetPageController.headerSetState = state.refresh;
       },
       builder: (State state) {
         return LoadAreaWidget<T>(sheetPageController.loadAreaController);

@@ -30,7 +30,7 @@ abstract class SbRoute extends OverlayRoute<SbPopResult> {
   /// [whenPop] 发生异常时的回调。
   ///
   /// [return] 返回 true，则表示 pop。
-  bool whenException(Object exception, StackTrace stackTrace);
+  bool whenException(Object? exception, StackTrace? stackTrace);
 
   ///初始化。
   void onInit() {}

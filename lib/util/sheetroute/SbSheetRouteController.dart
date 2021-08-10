@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:demo/util/sblogger/SbLogger.dart';
 import 'package:demo/util/sheetroute/SbSheetRoute.dart';
 import 'package:demo/util/sheetroute/SbSheetRouteWidget.dart';
 import 'package:flutter/gestures.dart';
@@ -16,14 +15,14 @@ class Mark {
   int value = 0;
 }
 
-/// [T] 是 [SbSheetPageController.bodyData] 的数据类型。
-class SbSheetPageController<T> extends ChangeNotifier {
+/// [D] 是 [SbSheetPageController.bodyData] 的数据类型。
+class SbSheetPageController<D> extends ChangeNotifier {
   ///
 
   // =============================================================================
 
   /// 当前 [SbSheetRoute]。
-  late final Route<void> sbSheetRoute;
+  late final SbSheetRoute<D> sbSheetRoute;
 
   /// [SbSheetRouteWidget] 中的 context。
   late final BuildContext sheetWidgetContext;
@@ -67,7 +66,7 @@ class SbSheetPageController<T> extends ChangeNotifier {
   // =============================================================================
 
   /// 内部滑动的数据数组
-  final List<T> bodyData = <T>[];
+  final List<D> bodyData = <D>[];
 
   /// 异步标记
   final Mark mark = Mark();
@@ -183,7 +182,7 @@ class SbSheetPageController<T> extends ChangeNotifier {
 
   // =============================================================================
 
-  void animationControllerAddListener(Future<void> bodyDataFuture(List<T> bodyData, Mark mark)) {
+  void animationControllerAddListener() {
     // 上一次 animationController.value。范围：0 ~ 1。
     double lastAnimationControllerValue = 0.0;
 
@@ -208,14 +207,14 @@ class SbSheetPageController<T> extends ChangeNotifier {
       //
       // 处在 [LoadingArea] 且向上滚动时，会触发 loading 操作
       if (animation.value >= scrollController.position.maxScrollExtent && touchDirection == Direction.up) {
-        dataLoad(bodyDataFuture);
+        dataLoad();
       }
 
       sheetRouteWidgetSetState();
     });
   }
 
-  void scrollControllerAddListener(Future<void> Function(List<T> bodyData, Mark mark) bodyDataFuture) {
+  void scrollControllerAddListener() {
     scrollController.addListener(() {
       //
       // 当前滚动方向。非手势滑动方向。
@@ -230,13 +229,13 @@ class SbSheetPageController<T> extends ChangeNotifier {
       //
       // 处在 [LoadingArea] 且向上滚动时，会触发 loading 操作
       if (maxHeight + scrollController.position.pixels >= scrollController.position.maxScrollExtent && scrollDirection == Direction.up) {
-        dataLoad(bodyDataFuture);
+        dataLoad();
       }
     });
   }
 
   /// 异步加载数据
-  Future<void> dataLoad(Future<void> Function(List<T> bodyData, Mark mark) bodyDataFuture) async {
+  Future<void> dataLoad() async {
     if (_isDataLoading) {
       return;
     }
@@ -250,10 +249,10 @@ class SbSheetPageController<T> extends ChangeNotifier {
     try {
       // TODO: 需要去掉。
       await Future<void>.delayed(const Duration(seconds: 1));
-      await bodyDataFuture(bodyData, mark);
+      await sbSheetRoute.bodyDataFuture(bodyData, mark);
       isSuccess = true;
     } catch (e, st) {
-      sbLogger(message: 'body data err: ', exception: e, stackTrace: st);
+      sbSheetRoute.bodyDataException(e, st);
       isSuccess = false;
     }
 

@@ -35,8 +35,15 @@ abstract class AbstractLongPressedFragment<FDM extends ModelBase> extends Abstra
   }
 
   @override
-  bool whenException(Object exception, StackTrace stackTrace) {
-    sbLogger(message: 'pop err: ', exception: exception, stackTrace: stackTrace);
+  bool whenException(Object? exception, StackTrace? stackTrace) {
+    SbLogger(
+      code: null,
+      viewMessage: null,
+      data: null,
+      description: 'pop err',
+      exception: exception,
+      stackTrace: stackTrace,
+    );
     return false;
   }
 

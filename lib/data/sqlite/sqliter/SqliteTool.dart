@@ -28,7 +28,15 @@ class SqliteTool {
   /// 移除全部表。
   Future<void> dropAllTable() async {
     final List<String> tablesBefore = await getAllTableNames();
-    sbLogger(message: '移除前的表：$tablesBefore');
+
+    SbLogger(
+      code: null,
+      viewMessage: null,
+      data: null,
+      description: '移除前的表：$tablesBefore',
+      exception: null,
+      stackTrace: null,
+    );
 
     // 将存在的表全部移除。
     for (int i = 0; i < tablesBefore.length; i++) {
@@ -36,7 +44,15 @@ class SqliteTool {
     }
 
     final List<String> tablesAfter = await getAllTableNames();
-    sbLogger(message: '移除后的表：$tablesAfter');
+
+    SbLogger(
+      code: null,
+      viewMessage: null,
+      data: null,
+      description: '移除后的表：$tablesAfter',
+      exception: null,
+      stackTrace: null,
+    );
   }
 
   /// 创建全部需要的表
@@ -45,7 +61,14 @@ class SqliteTool {
       await db.execute(sqls.values.elementAt(i));
     }
     final List<String> result = await SqliteTool().getAllTableNames();
-    sbLogger(message: '创建全部需要的表完成：$result');
+    SbLogger(
+      code: null,
+      viewMessage: null,
+      data: null,
+      description: '创建全部需要的表完成：$result',
+      exception: null,
+      stackTrace: null,
+    );
   }
 
   /// 获取某表的全部字段名称。

@@ -9,9 +9,9 @@ import 'package:demo/muc/view/homepage/node/nodesheet/more/AbstractMoreRoute.dar
 import 'package:demo/muc/view/homepage/node/nodesheet/more/MoreRoute.dart';
 import 'package:demo/util/SbHelper.dart';
 import 'package:demo/util/sbbutton/SbButton.dart';
+import 'package:demo/util/sblogger/SbLogger.dart';
 import 'package:demo/util/sheetroute/SbSheetRouteController.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class NodeSheetRouteForComplete extends AbstractNodeSheetRoute<MFComplete> {
   NodeSheetRouteForComplete(PoolNodeModel poolNodeModel) : super(poolNodeModel);
@@ -40,6 +40,18 @@ class NodeSheetRouteForComplete extends AbstractNodeSheetRoute<MFComplete> {
       ),
     );
     bodyData.addAll(models);
+  }
+
+  @override
+  void bodyDataException(Object? exception, StackTrace? stackTrace) {
+    SbLogger(
+      code: null,
+      viewMessage: null,
+      data: null,
+      description: null,
+      exception: exception,
+      stackTrace: stackTrace,
+    );
   }
 
   @override

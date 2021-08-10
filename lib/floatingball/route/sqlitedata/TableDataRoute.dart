@@ -74,8 +74,15 @@ class TableDataRoute extends SbRoute {
   }
 
   @override
-  bool whenException(Object exception, StackTrace stackTrace) {
-    sbLogger(message: 'err: ', exception: exception, stackTrace: stackTrace);
+  bool whenException(Object? exception, StackTrace? stackTrace) {
+    SbLogger(
+      code: null,
+      viewMessage: null,
+      data: null,
+      description: null,
+      exception: exception,
+      stackTrace: stackTrace,
+    );
     return false;
   }
 }
@@ -116,7 +123,14 @@ class _TableForTableDataState extends State<TableForTableData> {
 
   Widget _builder(BuildContext context, AsyncSnapshot<void> snapshot) {
     if (snapshot.hasError) {
-      sbLogger(message: 'err: ', exception: snapshot.error, stackTrace: snapshot.stackTrace);
+      SbLogger(
+        code: null,
+        viewMessage: null,
+        data: null,
+        description: null,
+        exception: snapshot.error,
+        stackTrace: snapshot.stackTrace,
+      );
       return const Text('err');
     }
     switch (snapshot.connectionState) {

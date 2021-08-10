@@ -16,6 +16,8 @@ abstract class SbSheetRoute<D> extends OverlayRoute<Object?> {
   /// [mark]：对数据源进行标记，以便加载更多时获取到的是 [mark] 为起点之后的数据。
   Future<void> bodyDataFuture(List<D> bodyData, Mark mark);
 
+  void bodyDataException(Object? exception, StackTrace? stackTrace);
+
   /// [headerSliver]：返回值必须是一个 sliver
   Widget headerSliver();
 

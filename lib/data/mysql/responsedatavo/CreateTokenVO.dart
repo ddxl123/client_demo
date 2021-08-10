@@ -1,7 +1,8 @@
 import 'package:demo/data/model/MToken.dart';
-import 'package:demo/data/mysql/vo/ResponseVOBase.dart';
 
-class CreateTokenVO extends ResponseVOBase {
+import 'ResponseDataVOBase.dart';
+
+class CreateTokenVO extends ResponseDataVOBase {
   late String emailToken;
 
   @override

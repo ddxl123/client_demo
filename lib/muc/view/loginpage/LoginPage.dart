@@ -1,15 +1,25 @@
+import 'dart:async';
+
 import 'package:demo/data/mysql/http/HttpCurd.dart';
+import 'package:demo/data/mysql/http/HttpPath.dart';
+import 'package:demo/data/mysql/http/HttpResult.dart';
+import 'package:demo/data/mysql/responsedatavo/NullDataVO.dart';
+import 'package:demo/data/mysql/vo/NullDataVO.dart';
 import 'package:demo/global/Global.dart';
 import 'package:demo/util/sblogger/SbLogger.dart';
 import 'package:demo/util/sbroundedbox/SbRoundedBox.dart';
 import 'package:demo/util/sbroute/SbPopResult.dart';
 import 'package:demo/util/sbroute/SbRoute.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:demo/util/sheetroute/Helper.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends SbRoute {
   TextEditingController emailTextEditingController = TextEditingController(text: '1033839760@qq.com');
   TextEditingController codeTextEditingController = TextEditingController();
+
+  Timer? timer;
+  int time = 30;
+  String text = '发送';
 
   @override
   List<Widget> body() {
@@ -30,7 +40,7 @@ class LoginPage extends SbRoute {
             child: Row(
               children: <Widget>[
                 _codeInputField(),
-                // _sendEmailButton(),
+                _sendEmailButton(),
               ],
             ),
           ),
@@ -71,59 +81,79 @@ class LoginPage extends SbRoute {
     );
   }
 
-  // Widget _sendEmailButton() {
-  //   return RebuildHandleWidget<SendEmailButtonHandlerEnum>(
-  //     rebuildHandler:
-  //         context.read<LoginPageController>().sendEmailButtonRebuildHandler,
-  //     builder: (RebuildHandler<SendEmailButtonHandlerEnum> handler) {
-  //       if (handler.handleCode == SendEmailButtonHandlerEnum.countdown) {
-  //         // 倒计时状态
-  //         handler.state['banOnPressed'] = true;
-  //         handler.state['time'] ??= 10;
-  //         handler.state['text'] = "${handler.state["time"]} s";
-  //         handler.state['timer'] ??= Timer.periodic(
-  //           const Duration(seconds: 1),
-  //           (Timer timer) {
-  //             if (handler.state['time'] == 0) {
-  //               (handler.state['timer'] as Timer).cancel();
-  //               handler.rebuildHandle(SendEmailButtonHandlerEnum.unSent, true);
-  //             } else {
-  //               handler.state['time'] -= 1;
-  //               handler.rebuildHandle(SendEmailButtonHandlerEnum.countdown);
-  //             }
-  //           },
-  //         );
-  //       } else if (handler.handleCode == SendEmailButtonHandlerEnum.unSent) {
-  //         // 未发送状态
-  //         handler.state['timer']?.cancel();
-  //         handler.state.clear();
-  //         handler.state['banOnPressed'] = false;
-  //         handler.state['text'] = '发送验证码';
-  //       }
-  //
-  //       return TextButton(
-  //         style: ButtonStyle(
-  //           side: MaterialStateProperty.all(
-  //               const BorderSide(color: Colors.green)),
-  //         ),
-  //         child: Text(handler.state['text'] as String),
-  //         onPressed: () {
-  //           if (handler.state['banOnPressed'] == true) {
-  //             dLog(() => 'banOnPressed');
-  //             return;
-  //           }
-  //           handler.rebuildHandle(SendEmailButtonHandlerEnum.countdown);
-  //           context.read<LoginPageController>().sendEmailRequest(
-  //                 handler: handler,
-  //                 emailTextEditingController: context
-  //                     .read<LoginPageController>()
-  //                     .emailTextEditingController,
-  //               );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
+  Widget _sendEmailButton() {
+    return StatefulInitBuilder(
+      init: (StatefulInitBuilderState state) {},
+      builder: (StatefulInitBuilderState state) {
+        return TextButton(
+          child: Text(text),
+          onPressed: () async {
+            if (timer == null) {
+              time = 10;
+              text = time.toString() + 's';
+              state.refresh();
+              timer = Timer.periodic(
+                const Duration(seconds: 1),
+                (Timer t) {
+                  if (time == 0) {
+                    timer?.cancel();
+                    timer = null;
+                    text = '重新发送';
+                    state.refresh();
+                    return;
+                  }
+                  time -= 1;
+                  text = time.toString() + 's';
+                  state.refresh();
+                },
+              );
+              final HttpResult<HttpStore_LONGIN_AND_REGISTER_BY_EMAIL_SEND_EMAIL, NullDataVO> httpResult = await HttpCurd.sendRequest(
+                method: 'POST',
+                httpPath: HttpStore_LONGIN_AND_REGISTER_BY_EMAIL_SEND_EMAIL(),
+                getRequestDataVO: ,
+                requestDataVO: <String, dynamic>{},
+                queryParameters: null,
+                headers: null,
+                sameNotConcurrent: 'sendEmail',
+                responseDataVO: NullDataVO(),
+              );
+              await httpResult.handle(
+                doCancel: (HttpResult<HttpStore_LONGIN_AND_REGISTER_BY_EMAIL_SEND_EMAIL, NullDataVO> ht) async {
+                  timer?.cancel();
+                  timer = null;
+                  text = '重新发送';
+                  state.refresh();
+                  SbLogger(
+                    code: ht.getCode,
+                    viewMessage: ht.getViewMessage,
+                    data: null,
+                    description: ht.getDescription,
+                    exception: ht.getException,
+                    stackTrace: ht.getStackTrace,
+                  );
+                },
+                doContinue: (HttpResult<HttpStore_LONGIN_AND_REGISTER_BY_EMAIL_SEND_EMAIL, NullDataVO> ht) async {
+                  // 发生成功。
+                  if (ht.getCode == ht.getHttpPath.C1_01_02) {
+                    SbLogger(
+                      code: null,
+                      viewMessage: ht.getViewMessage,
+                      data: null,
+                      description: ht.getDescription,
+                      exception: null,
+                      stackTrace: null,
+                    );
+                    return true;
+                  }
+                  return false;
+                },
+              );
+            }
+          },
+        );
+      },
+    );
+  }
 
   Widget _verifyEmailButton() {
     return Flexible(
@@ -135,6 +165,12 @@ class LoginPage extends SbRoute {
           ),
           child: const Text('登陆/注册'),
           onPressed: () {
+            HttpCurd.sendRequestForCreateToken(
+              httpPath: HttpStore_LONGIN_AND_REGISTER_BY_EMAIL_VERIFY_EMAIL(),
+              getRequestDataVO: <String, dynamic>{
+
+              },
+            );
             // context.read<LoginPageController>().verifyEmailRequest(
             //       qqEmailTextEditingController: context
             //           .read<LoginPageController>()
@@ -155,8 +191,8 @@ class LoginPage extends SbRoute {
   }
 
   @override
-  bool whenException(Object exception, StackTrace stackTrace) {
-    sbLogger(message: 'err: ', exception: exception, stackTrace: stackTrace);
+  bool whenException(Object? exception, StackTrace? stackTrace) {
+    SbLogger.debug(viewMessage: 'err: ', exception: exception, stackTrace: stackTrace);
     return false;
   }
 }

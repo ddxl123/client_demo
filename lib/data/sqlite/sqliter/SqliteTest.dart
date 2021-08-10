@@ -106,6 +106,13 @@ class SqliteTest {
     //   },
     // );
     //
-    sbLogger(message: '生成测试数据成功！');
+    SbLogger(
+      code: null,
+      viewMessage: null,
+      data: null,
+      description: '生成测试数据成功！',
+      exception: null,
+      stackTrace: null,
+    );
   }
 }

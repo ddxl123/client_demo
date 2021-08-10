@@ -30,7 +30,14 @@ class SqliteDataRoute extends SbRoute {
     }
 
     if (!snapshot.hasData || snapshot.hasError) {
-      sbLogger(message: 'err: ', exception: snapshot.error, stackTrace: snapshot.stackTrace);
+      SbLogger(
+        code: null,
+        viewMessage: null,
+        data: null,
+        description: null,
+        exception: snapshot.error,
+        stackTrace: snapshot.stackTrace,
+      );
       return sbRoundedBox(
         children: const <Widget>[
           Text('获取失败'),
@@ -93,8 +100,15 @@ class SqliteDataRoute extends SbRoute {
   }
 
   @override
-  bool whenException(Object exception, StackTrace stackTrace) {
-    sbLogger(message: 'err: ', exception: exception, stackTrace: stackTrace);
+  bool whenException(Object? exception, StackTrace? stackTrace) {
+    SbLogger(
+      code: null,
+      viewMessage: null,
+      data: null,
+      description: null,
+      exception: exception,
+      stackTrace: stackTrace,
+    );
     return false;
   }
 }

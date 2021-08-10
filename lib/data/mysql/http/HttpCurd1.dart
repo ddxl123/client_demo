@@ -3,7 +3,7 @@ import 'package:demo/Config.dart';
 import 'package:demo/data/model/MToken.dart';
 import 'package:demo/data/model/ModelManager.dart';
 import 'package:demo/data/mysql/http/HttpPath.dart';
-import 'package:demo/data/mysql/httpstore/base/HttpResponse.dart';
+import 'package:demo/data/mysql/http/HttpResult.dart';
 import 'package:demo/data/mysql/httpstore/base/HttpStore.dart';
 import 'package:demo/data/mysql/requestdatavo/RequestDataVOBase.dart';
 import 'package:demo/data/mysql/responsedatavo/CreateTokenVO.dart';
@@ -48,24 +48,28 @@ class HttpCurd {
   ///
   /// 向云端修改数据成功，而响应回本地修改 sqlite 数据失败 ———— 该问题会在 [SqliteCurd] 中进行处理。
   ///
-  static Future<HttpStore> sendRequest({
-    required HttpStore getHttpStore(),
+  static Future<HttpResult> sendRequest({
+    required HttpStore httpStore,
+    required String method,
+    required P httpPath,
+    required RequestDataVOBase getRequestDataVO(),
+    required Map<String, dynamic>? queryParameters,
+    required Map<String, dynamic>? headers,
     required String? sameNotConcurrent,
+    required T responseDataVO,
     bool isBanAllOtherRequest = false,
   }) async {
     try {
-      // 在捕获异常内进行生成，以便生成时出现异常能直接捕获。
-      final HttpStore httpStore = getHttpStore();
-      await httpStore.requestCheck();
+      final Map<String, dynamic> requestDataVO = getRequestDataVO().toJson();
 
       if (_isBanAllRequest) {
-        return httpStore.setCancel(description: '已禁止全部请求！', exception: null, stackTrace: null);
+        return HttpResult<P, T>.failure(description: '已禁止全部请求！', responseDataVO: responseDataVO, httpPath: httpPath);
       }
 
       if (isBanAllOtherRequest) {
         // 若存在任意请求，则当前请求触发失败。
         if (_sameNotConcurrentMap.isNotEmpty) {
-          return httpStore.setCancel(description: '要禁止其他全部请求时，已存在其他请求，需在没有任何请求的情况下才能触发！', exception: null, stackTrace: null);
+          return HttpResult<P, T>.failure(description: '要禁止其他全部请求时，已存在其他请求，需在没有任何请求的情况下才能触发！', responseDataVO: responseDataVO, httpPath: httpPath);
         }
         _isBanAllRequest = true;
       }
@@ -73,7 +77,7 @@ class HttpCurd {
       if (sameNotConcurrent != null) {
         /// 若相同请求被并发
         if (_sameNotConcurrentMap.containsKey(sameNotConcurrent)) {
-          return httpStore.setCancel(description: '相同标记的请求被并发！', exception: null, stackTrace: null);
+          return HttpResult<P, T>.failure(description: '相同标记的请求被并发！', responseDataVO: responseDataVO, httpPath: httpPath);
         }
 
         /// 当相同请求未并发时，对当前请求做阻断标记
@@ -84,7 +88,7 @@ class HttpCurd {
         code: null,
         viewMessage: null,
         data: null,
-        description: '${httpStore.httpRequest.path} ' + dio.options.baseUrl + httpStore.httpRequest.path,
+        description: '$method ' + dio.options.baseUrl + httpPath.PATH,
         exception: null,
         stackTrace: null,
       );
@@ -93,23 +97,43 @@ class HttpCurd {
         await Future<void>.delayed(const Duration(seconds: 2));
       }
 
+      final String must = httpPath.PATH.split('/')[1];
+      final bool isAuth;
+      if (must == 'jwt') {
+        isAuth = true;
+      } else if (must == 'no_jwt') {
+        isAuth = false;
+      } else {
+        throw 'Path is irregular! "$httpPath"';
+      }
+
+      /// 给请求头设置 token
+      Map<String, dynamic>? authHeaders;
+      if (isAuth) {
+        final List<MToken> tokens = await ModelManager.queryRowsAsModels(connectTransaction: null, tableName: MToken().tableName);
+        authHeaders = <String, dynamic>{'Authorization': 'Bearer ' + (tokens.isEmpty ? '' : (tokens.first.get_token ?? ''))};
+      }
+
       final Response<Map<String, dynamic>> response = await dio.request<Map<String, dynamic>>(
-        httpStore.httpRequest.path,
-        data: httpStore.httpRequest.requestDataVO?.toJson(),
-        queryParameters: httpStore.httpRequest.requestParamsVO?.toJson(),
-        options: Options(
-          method: httpStore.httpRequest.path,
-          headers: httpStore.httpRequest.requestHeaders,
-        ),
+        httpPath.PATH,
+        data: requestDataVO,
+        queryParameters: queryParameters,
+        options: Options(method: method, headers: headers ?? authHeaders),
       );
 
       _sameNotConcurrentMap.remove(sameNotConcurrent);
       _isBanAllRequest = false;
-      return httpStore.setPass(response);
+      return HttpResult<P, T>.from(response, httpPath, responseDataVO);
     } catch (e, st) {
       _sameNotConcurrentMap.remove(sameNotConcurrent);
       _isBanAllRequest = false;
-      return HttpStore_Catch().setCancel(description: '请求出现异常！', exception: e, stackTrace: st);
+      return HttpResult<P, T>.failure(
+        description: '请求出现异常！',
+        responseDataVO: responseDataVO,
+        httpPath: httpPath,
+        exception: e,
+        stackTrace: st,
+      );
     }
   }
 
@@ -118,48 +142,11 @@ class HttpCurd {
   ///
   ///
   ///
-  static Future<bool> sendRequestForCreateToken({
-    required HttpStore getHttpStore(),
+  static Future<bool> sendRequestForCreateToken<P extends HttpStoreBase_OF_CREATE_TOKEN>({
+    required P httpPath,
     required RequestDataVOBase getRequestDataVO(),
   }) async {
     bool isSuccess = false;
-
-    final HttpStore httpStore = await sendRequest(getHttpStore: getHttpStore, sameNotConcurrent: null);
-
-    await httpStore.httpResponse.handle(
-      doContinue: (HttpResponse hr) async {
-        // 邮箱验证成功响应。
-        if (hr.code == hr. .getHttpPath.C1_02_02 || ht.getCode == ht.getHttpPath.C1_02_05) {
-          // 云端 token 生成成功，存储至本地。
-          final MToken newToken = MToken.createModel(
-            id: null,
-            aiid: null,
-            uuid: null,
-            created_at: SbHelper().newTimestamp,
-            updated_at: SbHelper().newTimestamp,
-            // 无论 token 值是否有问题，都进行存储。
-            token: ht.getResponseDataVO.emailToken,
-          );
-
-          await db.delete(MToken().tableName);
-          await db.insert(newToken.tableName, newToken.getRowJson);
-
-          SbLogger(
-            code: null,
-            viewMessage: ht.getViewMessage,
-            data: null,
-            description: null,
-            exception: null,
-            stackTrace: null,
-          );
-
-          isSuccess = true;
-          return true;
-        }
-        return false;
-      },
-      doCancel: (HttpResponse hr) async {},
-    );
 
     final HttpResult<P, CreateTokenVO> httpResult = await sendRequest(
       method: 'POST',
@@ -219,11 +206,11 @@ class HttpCurd {
     return isSuccess;
   }
 
-///
-///
-///
-///
-///
+  ///
+  ///
+  ///
+  ///
+  ///
 // static Future<bool> sendRequestForRefreshToken() async {
 //   bool isSuccess = false;
 //

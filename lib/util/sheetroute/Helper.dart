@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 class StatefulInitBuilder extends StatefulWidget {
   const StatefulInitBuilder({required this.init, required this.builder});
 
-  final void Function(State state) init;
-  final Widget Function(State state) builder;
+  final void Function(StatefulInitBuilderState state) init;
+  final Widget Function(StatefulInitBuilderState state) builder;
 
   @override
-  _StatefulInitBuilderState createState() => _StatefulInitBuilderState();
+  StatefulInitBuilderState createState() => StatefulInitBuilderState();
 }
 
-class _StatefulInitBuilderState extends State<StatefulInitBuilder> {
+class StatefulInitBuilderState extends State<StatefulInitBuilder> {
   @override
   void initState() {
     super.initState();
@@ -20,5 +20,11 @@ class _StatefulInitBuilderState extends State<StatefulInitBuilder> {
   @override
   Widget build(BuildContext context) {
     return widget.builder(this);
+  }
+
+  void refresh() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 }
