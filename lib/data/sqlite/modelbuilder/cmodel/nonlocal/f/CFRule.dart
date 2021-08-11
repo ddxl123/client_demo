@@ -2,7 +2,7 @@ import 'package:demo/data/sqlite/modelbuilder/builder/Type.dart';
 import 'package:demo/data/sqlite/modelbuilder/builder/creator/FieldCreator.dart';
 import 'package:demo/data/sqlite/modelbuilder/builder/creator/ForeignKeyCreator.dart';
 import 'package:demo/data/sqlite/modelbuilder/builder/creator/ModelCreator.dart';
-import 'package:demo/data/sqlite/modelbuilder/model/nonlocal/pn/CPnRule.dart';
+import 'package:demo/data/sqlite/modelbuilder/cmodel/nonlocal/pn/CPnRule.dart';
 
 class CFRule extends ModelCreator {
   @override

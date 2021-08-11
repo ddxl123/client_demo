@@ -2,9 +2,9 @@ import 'package:demo/data/sqlite/modelbuilder/builder/Type.dart';
 import 'package:demo/data/sqlite/modelbuilder/builder/creator/FieldCreator.dart';
 import 'package:demo/data/sqlite/modelbuilder/builder/creator/ForeignKeyCreator.dart';
 import 'package:demo/data/sqlite/modelbuilder/builder/creator/ModelCreator.dart';
-import 'package:demo/data/sqlite/modelbuilder/model/nonlocal/f/CFRule.dart';
+import 'package:demo/data/sqlite/modelbuilder/cmodel/nonlocal/f/CFRule.dart';
 
-class CPnMemory extends ModelCreator {
+class CPnComplete extends ModelCreator {
   @override
   List<FieldCreator> get fields => <FieldCreator>[
         ForeignKeyAiidField(fieldName: 'rule_aiid', foreignKey: ForeignKeyCreator(CFRule(), false)),

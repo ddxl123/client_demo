@@ -1,8 +1,8 @@
 import 'package:demo/Config.dart';
 import 'package:demo/appversion/AppVersionManager.dart';
 import 'package:demo/appversion/AppVersionStatus.dart';
-import 'package:demo/data/model/MAppVersionInfo.dart';
-import 'package:demo/data/model/ParseIntoSqls.dart';
+import 'package:demo/data/sqlite/mmodel/MAppVersionInfo.dart';
+import 'package:demo/data/sqlite/mmodel/ParseIntoSqls.dart';
 import 'package:demo/data/sqlite/sqliter/SqliteTest.dart';
 import 'package:demo/util/SbHelper.dart';
 

@@ -1,6 +1,7 @@
-import 'package:demo/data/model/MFRule.dart';
-import 'package:demo/data/model/MPnRule.dart';
-import 'package:demo/data/model/ModelManager.dart';
+
+import 'package:demo/data/sqlite/mmodel/MFRule.dart';
+import 'package:demo/data/sqlite/mmodel/MPnRule.dart';
+import 'package:demo/data/sqlite/mmodel/ModelManager.dart';
 import 'package:demo/muc/getcontroller/homepage/PoolGetController.dart';
 import 'package:demo/muc/view/homepage/node/nodesheet/longpressedfragment/LongPressedFragment.dart';
 import 'package:demo/muc/view/homepage/node/nodesheet/more/AbstractMoreRoute.dart';

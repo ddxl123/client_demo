@@ -1,4 +1,5 @@
-import 'package:demo/data/model/MToken.dart';
+
+import 'package:demo/data/sqlite/mmodel/MToken.dart';
 
 import 'ResponseDataVOBase.dart';
 

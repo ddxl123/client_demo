@@ -1,6 +1,7 @@
-import 'package:demo/data/model/MFMemory.dart';
-import 'package:demo/data/model/MPnMemory.dart';
-import 'package:demo/data/model/ModelManager.dart';
+
+import 'package:demo/data/sqlite/mmodel/MFMemory.dart';
+import 'package:demo/data/sqlite/mmodel/MPnMemory.dart';
+import 'package:demo/data/sqlite/mmodel/ModelManager.dart';
 import 'package:demo/muc/getcontroller/homepage/PoolGetController.dart';
 import 'package:demo/muc/view/homepage/node/nodesheet/fragment/FragmentPage.dart';
 import 'package:demo/muc/view/homepage/node/nodesheet/longpressedfragment/LongPressedFragment.dart';

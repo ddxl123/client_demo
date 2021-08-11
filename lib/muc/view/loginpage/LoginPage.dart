@@ -1,11 +1,15 @@
 import 'dart:async';
 
 import 'package:demo/data/mysql/http/HttpCurd.dart';
-import 'package:demo/data/mysql/http/HttpPath.dart';
-import 'package:demo/data/mysql/http/HttpResult.dart';
-import 'package:demo/data/mysql/responsedatavo/NullDataVO.dart';
-import 'package:demo/data/mysql/vo/NullDataVO.dart';
+import 'package:demo/data/mysql/httpstore/base/HttpRequest.dart';
+import 'package:demo/data/mysql/httpstore/base/HttpResponse.dart';
+import 'package:demo/data/mysql/httpstore/store/HttpStore_login_and_register_by_email_send_email.dart';
+import 'package:demo/data/mysql/httpstore/store/HttpStore_login_and_register_by_email_verify_email.dart';
+import 'package:demo/data/sqlite/mmodel/MToken.dart';
+import 'package:demo/data/sqlite/mmodel/MUser.dart';
+import 'package:demo/data/sqlite/sqliter/OpenSqlite.dart';
 import 'package:demo/global/Global.dart';
+import 'package:demo/util/SbHelper.dart';
 import 'package:demo/util/sblogger/SbLogger.dart';
 import 'package:demo/util/sbroundedbox/SbRoundedBox.dart';
 import 'package:demo/util/sbroute/SbPopResult.dart';
@@ -107,45 +111,45 @@ class LoginPage extends SbRoute {
                   state.refresh();
                 },
               );
-              final HttpResult<HttpStore_LONGIN_AND_REGISTER_BY_EMAIL_SEND_EMAIL, NullDataVO> httpResult = await HttpCurd.sendRequest(
-                method: 'POST',
-                httpPath: HttpStore_LONGIN_AND_REGISTER_BY_EMAIL_SEND_EMAIL(),
-                getRequestDataVO: ,
-                requestDataVO: <String, dynamic>{},
-                queryParameters: null,
-                headers: null,
-                sameNotConcurrent: 'sendEmail',
-                responseDataVO: NullDataVO(),
+
+              final HttpStore_login_and_register_by_email_send_email httpStore = await HttpCurd.sendRequest(
+                getHttpStore: () => HttpStore_login_and_register_by_email_send_email(
+                  requestDataVO_LARBESE: RequestDataVO_LARBESE(
+                    email: KeyValue<String>(MUser().email, emailTextEditingController.text),
+                  ),
+                ),
+                sameNotConcurrent: null,
+                isBanAllOtherRequest: true,
               );
-              await httpResult.handle(
-                doCancel: (HttpResult<HttpStore_LONGIN_AND_REGISTER_BY_EMAIL_SEND_EMAIL, NullDataVO> ht) async {
-                  timer?.cancel();
-                  timer = null;
-                  text = '重新发送';
-                  state.refresh();
-                  SbLogger(
-                    code: ht.getCode,
-                    viewMessage: ht.getViewMessage,
-                    data: null,
-                    description: ht.getDescription,
-                    exception: ht.getException,
-                    stackTrace: ht.getStackTrace,
-                  );
-                },
-                doContinue: (HttpResult<HttpStore_LONGIN_AND_REGISTER_BY_EMAIL_SEND_EMAIL, NullDataVO> ht) async {
+              httpStore.httpResponse.handle(
+                doContinue: (HttpResponse<ResponseCodeCollect_LARBESE, ResponseNullDataVO> hr) async {
                   // 发生成功。
-                  if (ht.getCode == ht.getHttpPath.C1_01_02) {
+                  if (hr.code == hr.responseCodeCollect.C1_01_02) {
                     SbLogger(
                       code: null,
-                      viewMessage: ht.getViewMessage,
+                      viewMessage: hr.viewMessage,
                       data: null,
-                      description: ht.getDescription,
+                      description: hr.description,
                       exception: null,
                       stackTrace: null,
                     );
                     return true;
                   }
                   return false;
+                },
+                doCancel: (HttpResponse<ResponseCodeCollect_LARBESE, ResponseNullDataVO> hr) async {
+                  timer?.cancel();
+                  timer = null;
+                  text = '重新发送';
+                  state.refresh();
+                  SbLogger(
+                    code: hr.code,
+                    viewMessage: hr.viewMessage,
+                    data: null,
+                    description: hr.description,
+                    exception: hr.exception,
+                    stackTrace: hr.stackTrace,
+                  );
                 },
               );
             }
@@ -164,21 +168,57 @@ class LoginPage extends SbRoute {
             side: MaterialStateProperty.all(const BorderSide(color: Colors.green)),
           ),
           child: const Text('登陆/注册'),
-          onPressed: () {
-            HttpCurd.sendRequestForCreateToken(
-              httpPath: HttpStore_LONGIN_AND_REGISTER_BY_EMAIL_VERIFY_EMAIL(),
-              getRequestDataVO: <String, dynamic>{
+          onPressed: () async {
+            final HttpStore_login_and_register_by_email_verify_email httpStore = await HttpCurd.sendRequest(
+              getHttpStore: () => HttpStore_login_and_register_by_email_verify_email(
+                requestDataVO_LARBEVE: RequestDataVO_LARBEVE(
+                  email: KeyValue<String>(MUser().email, emailTextEditingController.text),
+                  code: KeyValue<int>('code', int.parse(codeTextEditingController.text)),
+                ),
+              ),
+              sameNotConcurrent: null,
+              isBanAllOtherRequest: true,
+            );
+            await httpStore.httpResponse.handle(
+              doCancel: (HttpResponse<ResponseCodeCollect_LARBEVE, ResponseDataVO_LARBEVE> hr) async {
+                SbLogger(
+                  code: hr.code,
+                  viewMessage: hr.viewMessage,
+                  data: null,
+                  description: hr.description,
+                  exception: hr.exception,
+                  stackTrace: hr.stackTrace,
+                );
+              },
+              doContinue: (HttpResponse<ResponseCodeCollect_LARBEVE, ResponseDataVO_LARBEVE> hr) async {
+                if (hr.code == hr.responseCodeCollect.C1_02_02 || hr.code == hr.responseCodeCollect.C1_02_05) {
+                  // 云端 token 生成成功，存储至本地。
+                  final MToken newToken = MToken.createModel(
+                    id: null,
+                    aiid: null,
+                    uuid: null,
+                    created_at: SbHelper().newTimestamp,
+                    updated_at: SbHelper().newTimestamp,
+                    // 无论 token 值是否有问题，都进行存储。
+                    token: hr.responseDataVO.token,
+                  );
 
+                  await db.delete(MToken().tableName);
+                  await db.insert(newToken.tableName, newToken.getRowJson);
+
+                  SbLogger(
+                    code: null,
+                    viewMessage: hr.viewMessage,
+                    data: null,
+                    description: null,
+                    exception: null,
+                    stackTrace: null,
+                  );
+                  return true;
+                }
+                return false;
               },
             );
-            // context.read<LoginPageController>().verifyEmailRequest(
-            //       qqEmailTextEditingController: context
-            //           .read<LoginPageController>()
-            //           .emailTextEditingController,
-            //       codeTextEditingController: context
-            //           .read<LoginPageController>()
-            //           .codeTextEditingController,
-            //     );
           },
         ),
       ),
@@ -192,7 +232,7 @@ class LoginPage extends SbRoute {
 
   @override
   bool whenException(Object? exception, StackTrace? stackTrace) {
-    SbLogger.debug(viewMessage: 'err: ', exception: exception, stackTrace: stackTrace);
+    SbLogger(code: null, viewMessage: null, data: null, description: null, exception: exception, stackTrace: stackTrace);
     return false;
   }
 }

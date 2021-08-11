@@ -7,10 +7,10 @@ import 'package:demo/data/mysql/httpstore/base/HttpResponse.dart';
 
 import '../base/HttpStore.dart';
 
-class HttpStore_longin_and_register_by_email_send_email extends HttpStore_POST {
-  HttpStore_longin_and_register_by_email_send_email(
-    RequestDataVO_LARBESE requestDataVO_LARBESE,
-  ) : super(
+class HttpStore_login_and_register_by_email_send_email extends HttpStore_POST<RequestDataVO_LARBESE, ResponseCodeCollect_LARBESE, ResponseNullDataVO> {
+  HttpStore_login_and_register_by_email_send_email({
+    required RequestDataVO_LARBESE requestDataVO_LARBESE,
+  }) : super(
           HttpPath.NO_JWT + '/login_and_register_by_email/send_email',
           requestDataVO_LARBESE,
           ResponseCodeCollect_LARBESE(),

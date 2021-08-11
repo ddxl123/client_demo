@@ -1,4 +1,4 @@
-import 'package:demo/data/model/ModelBase.dart';
+import 'package:demo/data/sqlite/mmodel/ModelBase.dart';
 import 'package:demo/data/sqlite/sqliter/SqliteCurd.dart';
 import 'package:demo/muc/getcontroller/homepage/PoolGetController.dart';
 import 'package:demo/muc/view/homepage/poolentry/AbstractPoolEntry.dart';

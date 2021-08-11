@@ -19,7 +19,7 @@ class ModelListContent {
     final String modelbuilderPath = (Platform.script.pathSegments.toList()..removeLast()).join('/');
 
     // 获取 model 文件夹绝对 path。
-    final String modelPath = modelbuilderPath + '/model';
+    final String modelPath = modelbuilderPath + '/cmodel';
 
     // 自定义的标准绝对 model path。
     final String standardModelPath = Uri(path: modelPath).pathSegments.join('/');
@@ -41,7 +41,7 @@ class ModelListContent {
         // 相对 model 的 .dart 文件的 path，(不含 'model')。
         final String importPathForModel = standardFilePath.substring(standardModelPath.length, standardFilePath.length);
         // 相对 [ModelList.dart] 文件的 model 路径。
-        final String importPath = '../model' + importPathForModel;
+        final String importPath = '../cmodel' + importPathForModel;
 
         importPaths.add(importPath);
         classObj.add(last.split('.').first + '()');

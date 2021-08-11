@@ -1,8 +1,8 @@
 // ignore_for_file: non_constant_identifier_names
-import 'package:demo/data/model/MPnComplete.dart';
-import 'package:demo/data/model/MPnFragment.dart';
-import 'package:demo/data/model/MPnMemory.dart';
-import 'package:demo/data/model/MPnRule.dart';
+import 'package:demo/data/sqlite/mmodel/MPnComplete.dart';
+import 'package:demo/data/sqlite/mmodel/MPnFragment.dart';
+import 'package:demo/data/sqlite/mmodel/MPnMemory.dart';
+import 'package:demo/data/sqlite/mmodel/MPnRule.dart';
 import 'package:demo/util/SbHelper.dart';
 import 'package:demo/util/sblogger/SbLogger.dart';
 

@@ -1,7 +1,8 @@
-import 'package:demo/data/model/MFComplete.dart';
-import 'package:demo/data/model/MFFragment.dart';
-import 'package:demo/data/model/MFMemory.dart';
-import 'package:demo/data/model/MFRule.dart';
+
+import 'package:demo/data/sqlite/mmodel/MFComplete.dart';
+import 'package:demo/data/sqlite/mmodel/MFFragment.dart';
+import 'package:demo/data/sqlite/mmodel/MFMemory.dart';
+import 'package:demo/data/sqlite/mmodel/MFRule.dart';
 import 'package:demo/muc/view/homepage/node/nodesheet/entry/AbstractNodeSheetRoute.dart';
 
 import 'AbstractLongPressedFragment.dart';

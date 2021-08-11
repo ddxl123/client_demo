@@ -21,7 +21,7 @@ class KeyValue<V> {
   late V value;
 }
 
-class HttpRequest {
+class HttpRequest<REQVO extends RequestDataVO, REQPVO extends RequestParamsVO> {
   HttpRequest({
     required this.method,
     required this.path,
@@ -40,8 +40,8 @@ class HttpRequest {
   Map<String, dynamic>? requestHeaders;
 
   /// 请求体 body VO 模型。
-  final RequestDataVO? requestDataVO;
+  final REQVO? requestDataVO;
 
   /// 请求体 params VO 模型。
-  final RequestParamsVO? requestParamsVO;
+  final REQPVO? requestParamsVO;
 }

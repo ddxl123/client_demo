@@ -7,14 +7,14 @@ import 'package:demo/data/mysql/httpstore/base/HttpResponse.dart';
 
 import '../base/HttpStore.dart';
 
-class HttpStore_longin_and_register_by_email_verify_email extends HttpStore_POST {
-  HttpStore_longin_and_register_by_email_verify_email(
-    RequestDataVO requestDataVO,
-  ) : super(
+class HttpStore_login_and_register_by_email_verify_email extends HttpStore_POST<RequestDataVO_LARBEVE, ResponseCodeCollect_LARBEVE, ResponseDataVO_LARBEVE> {
+  HttpStore_login_and_register_by_email_verify_email({
+    required RequestDataVO_LARBEVE requestDataVO_LARBEVE,
+  }) : super(
           HttpPath.NO_JWT + '/login_and_register_by_email/verify_email',
-          requestDataVO,
+          requestDataVO_LARBEVE,
           ResponseCodeCollect_LARBEVE(),
-          ResponseNullDataVO(),
+          ResponseDataVO_LARBEVE(),
         );
 }
 
@@ -35,4 +35,14 @@ class ResponseCodeCollect_LARBEVE extends ResponseCodeCollect {
 
   /// 登陆成功。
   final int C1_02_05 = 1010205;
+}
+
+class ResponseDataVO_LARBEVE extends ResponseDataVO {
+  late String token;
+
+  @override
+  ResponseDataVO from(Map<String, dynamic> dataJson) {
+    token = dataJson['token'] as String;
+    return this;
+  }
 }

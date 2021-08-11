@@ -1,25 +1,25 @@
 // ignore_for_file: camel_case_types
 
-import 'package:demo/data/model/MToken.dart';
-import 'package:demo/data/model/ModelManager.dart';
 import 'package:demo/data/mysql/http/HttpPath.dart';
 import 'package:demo/data/mysql/httpstore/base/HttpResponse.dart';
+import 'package:demo/data/sqlite/mmodel/MToken.dart';
+import 'package:demo/data/sqlite/mmodel/ModelManager.dart';
 import 'package:dio/dio.dart';
 
 import 'HttpRequest.dart';
 
-abstract class HttpStore {
-  late final HttpRequest httpRequest;
-  late final HttpResponse httpResponse;
+abstract class HttpStore<REQVO extends RequestDataVO, REQPVO extends RequestParamsVO, RESPCCOL extends ResponseCodeCollect, RESPDVO extends ResponseDataVO> {
+  late final HttpRequest<REQVO, REQPVO> httpRequest;
+  late final HttpResponse<RESPCCOL, RESPDVO> httpResponse;
 
   /// 直接取消。
-  HttpStore setCancel({required String description, required Object? exception, required StackTrace? stackTrace}) {
+  HttpStore<REQVO, REQPVO, RESPCCOL, RESPDVO> setCancel({required String description, required Object? exception, required StackTrace? stackTrace}) {
     httpResponse.setCancel(description, exception, stackTrace);
     return this;
   }
 
   /// 直接通过。
-  HttpStore setPass(Response<Map<String, dynamic>> response) {
+  HttpStore<REQVO, REQPVO, RESPCCOL, RESPDVO> setPass(Response<Map<String, dynamic>> response) {
     httpResponse.setPass(response);
     return this;
   }
@@ -36,60 +36,62 @@ abstract class HttpStore {
   }
 }
 
-abstract class HttpStore_GET extends HttpStore {
+abstract class HttpStore_GET<REQPVO extends RequestParamsVO, RESPCCOL extends ResponseCodeCollect, RESPDVO extends ResponseDataVO>
+    extends HttpStore<RequestDataVO, REQPVO, RESPCCOL, RESPDVO> {
   HttpStore_GET(
     String path,
-    RequestParamsVO requestParamsVO,
-    ResponseCodeCollect responseCodeCollect,
-    ResponseDataVO responseDataVO,
+    REQPVO requestParamsVO,
+    RESPCCOL responseCodeCollect,
+    RESPDVO responseDataVO,
   ) {
-    httpRequest = HttpRequest(
+    httpRequest = HttpRequest<RequestDataVO, REQPVO>(
       method: 'GET',
       path: path,
       requestHeaders: null,
       requestParamsVO: requestParamsVO,
       requestDataVO: null,
     );
-    httpResponse = HttpResponse(
+    httpResponse = HttpResponse<RESPCCOL, RESPDVO>(
       responseCodeCollect: responseCodeCollect,
       responseDataVO: responseDataVO,
     );
   }
 }
 
-abstract class HttpStore_POST extends HttpStore {
+abstract class HttpStore_POST<REQVO extends RequestDataVO, RESPCCOL extends ResponseCodeCollect, RESPDVO extends ResponseDataVO>
+    extends HttpStore<REQVO, RequestParamsVO, RESPCCOL, RESPDVO> {
   HttpStore_POST(
     String path,
-    RequestDataVO requestDataVO,
-    ResponseCodeCollect responseCodeCollect,
-    ResponseDataVO responseDataVO,
+    REQVO requestDataVO,
+    RESPCCOL responseCodeCollect,
+    RESPDVO responseDataVO,
   ) {
-    httpRequest = HttpRequest(
+    httpRequest = HttpRequest<REQVO, RequestParamsVO>(
       method: 'POST',
       path: path,
       requestHeaders: null,
       requestParamsVO: null,
       requestDataVO: requestDataVO,
     );
-    httpResponse = HttpResponse(
+    httpResponse = HttpResponse<RESPCCOL, RESPDVO>(
       responseCodeCollect: responseCodeCollect,
       responseDataVO: responseDataVO,
     );
   }
 }
 
-class HttpStore_Catch extends HttpStore {
+class HttpStore_Catch extends HttpStore<RequestDataVO, RequestParamsVO, ResponseCodeCollect, ResponseDataVO> {
   HttpStore_Catch() {
-    httpRequest = HttpRequest(
+    httpRequest = HttpRequest<RequestDataVO, RequestParamsVO>(
       method: '-',
       path: '-',
       requestHeaders: null,
       requestParamsVO: null,
       requestDataVO: null,
     );
-    httpResponse = HttpResponse(
-      responseCodeCollect: null,
-      responseDataVO: null,
+    httpResponse = HttpResponse<ResponseCodeCollect, ResponseDataVO>(
+      responseCodeCollect: ResponseNullCodeCollect(),
+      responseDataVO: ResponseNullDataVO(),
     );
   }
 }

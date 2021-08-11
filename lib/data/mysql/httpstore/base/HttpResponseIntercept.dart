@@ -13,10 +13,10 @@ class ReLoginCodeCollect {
   final int C1_05_04 = 3010504;
 }
 
-class HttpResponseIntercept {
+class HttpResponseIntercept<RESPCCOL extends ResponseCodeCollect, RESPDVO extends ResponseDataVO> {
   HttpResponseIntercept(this.httpResponse);
 
-  final HttpResponse httpResponse;
+  final HttpResponse<RESPCCOL, RESPDVO> httpResponse;
   final ReLoginCodeCollect reLoginCodeCollect = ReLoginCodeCollect();
 
   Future<void> handle() async {

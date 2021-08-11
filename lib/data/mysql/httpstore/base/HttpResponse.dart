@@ -8,6 +8,8 @@ abstract class ResponseDataVO {
   ResponseDataVO from(Map<String, dynamic> dataJson);
 }
 
+class ResponseNullCodeCollect extends ResponseCodeCollect {}
+
 class ResponseNullDataVO extends ResponseDataVO {
   @override
   ResponseDataVO from(Map<String, dynamic> dataJson) {
@@ -15,17 +17,17 @@ class ResponseNullDataVO extends ResponseDataVO {
   }
 }
 
-class HttpResponse {
+class HttpResponse<RESPCCOL extends ResponseCodeCollect, RESPDVO extends ResponseDataVO> {
   HttpResponse({
     required this.responseCodeCollect,
     required this.responseDataVO,
   });
 
   /// 响应码集。
-  final ResponseCodeCollect? responseCodeCollect;
+  final RESPCCOL responseCodeCollect;
 
   /// 响应体 data VO 模型。
-  final ResponseDataVO? responseDataVO;
+  final RESPDVO responseDataVO;
 
   /// 响应头。
   Headers? responseHeaders;
@@ -109,8 +111,8 @@ class HttpResponse {
   ///
   /// [doCancel] 处理除 [doContinue] 外的其他任何异常或响应。
   Future<void> handle({
-    required Future<bool> doContinue(HttpResponse hr),
-    required Future<void> doCancel(HttpResponse hr),
+    required Future<bool> doContinue(HttpResponse<RESPCCOL, RESPDVO> hr),
+    required Future<void> doCancel(HttpResponse<RESPCCOL, RESPDVO> hr),
   }) async {
     if (isContinue) {
       bool isOk = false;
@@ -124,7 +126,7 @@ class HttpResponse {
 
       if (!isOk) {
         try {
-          await HttpResponseIntercept(this).handle();
+          await HttpResponseIntercept<RESPCCOL, RESPDVO>(this).handle();
         } catch (e, st) {
           setCancel('HttpIntercept err!', e, st);
         }

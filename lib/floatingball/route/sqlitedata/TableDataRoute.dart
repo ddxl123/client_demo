@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:demo/data/model/ModelBase.dart';
-import 'package:demo/data/model/ModelManager.dart';
+import 'package:demo/data/sqlite/mmodel/ModelBase.dart';
+import 'package:demo/data/sqlite/mmodel/ModelManager.dart';
 import 'package:demo/data/sqlite/sqliter/SqliteTool.dart';
 import 'package:demo/util/sbfreebox/SbFreeBox.dart';
 import 'package:demo/util/sbfreebox/SbFreeBoxController.dart';

@@ -1,6 +1,6 @@
-import 'package:demo/data/model/MUpload.dart';
-import 'package:demo/data/model/ModelBase.dart';
-import 'package:demo/data/model/ModelManager.dart';
+import 'package:demo/data/sqlite/mmodel/MUpload.dart';
+import 'package:demo/data/sqlite/mmodel/ModelBase.dart';
+import 'package:demo/data/sqlite/mmodel/ModelManager.dart';
 import 'package:demo/util/SbHelper.dart';
 import 'package:demo/util/sblogger/SbLogger.dart';
 import 'package:sqflite/sqflite.dart';

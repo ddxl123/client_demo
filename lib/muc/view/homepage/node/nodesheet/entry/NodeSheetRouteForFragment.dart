@@ -1,6 +1,7 @@
-import 'package:demo/data/model/MFFragment.dart';
-import 'package:demo/data/model/MPnFragment.dart';
-import 'package:demo/data/model/ModelManager.dart';
+
+import 'package:demo/data/sqlite/mmodel/MFFragment.dart';
+import 'package:demo/data/sqlite/mmodel/MPnFragment.dart';
+import 'package:demo/data/sqlite/mmodel/ModelManager.dart';
 import 'package:demo/muc/getcontroller/homepage/PoolGetController.dart';
 import 'package:demo/muc/view/homepage/node/nodesheet/fragment/FragmentPage.dart';
 import 'package:demo/muc/view/homepage/node/nodesheet/longpressedfragment/LongPressedFragment.dart';
